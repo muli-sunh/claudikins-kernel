@@ -47,7 +47,7 @@ if [ -n "$AGENT_OUTPUT" ] && [ "$AGENT_OUTPUT" != "null" ]; then
 else
     # No output to capture - save the full input for debugging
     echo "$INPUT" > "${OUTPUT_FILE%.json}-raw.json"
-    echo "No structured output found. Saved raw input for debugging."
+    echo "WARNING: No structured output found. Saved raw input for debugging." >&2
 fi
 
 # Update plan state if it exists
@@ -58,8 +58,10 @@ if [ -f "$PLAN_STATE" ]; then
 
     # Update research_complete flag
     if [ "$EXHAUSTED" = "true" ]; then
-        jq '.research_complete = true' "$PLAN_STATE" > "${PLAN_STATE}.tmp" && \
-            mv "${PLAN_STATE}.tmp" "$PLAN_STATE"
+        if ! jq '.research_complete = true' "$PLAN_STATE" > "${PLAN_STATE}.tmp" 2>&1; then
+            echo "capture-research.sh: WARNING - failed to update plan state" >&2
+        fi
+        mv "${PLAN_STATE}.tmp" "$PLAN_STATE" 2>/dev/null || true
     fi
 fi
 

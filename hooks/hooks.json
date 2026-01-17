@@ -1,5 +1,5 @@
 {
-  "description": "Hooks for claudikins-kernel /plan command workflow",
+  "description": "Hooks for claudikins-kernel /plan, /execute, /verify, and /ship command workflows",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,72 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-startup.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "/verify",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-init.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/ship",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ship-init.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "/execute",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-plan-format.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "/execute.*(--status|status)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/execute-status.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "babyclaude",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/create-task-branch.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/git-branch-guard.sh",
             "timeout": 10
           }
         ]
@@ -23,15 +89,13 @@
             "timeout": 30
           }
         ]
-      }
-    ],
-    "Stop": [
+      },
       {
         "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-plan-completion.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/execute-tracker.sh",
             "timeout": 10
           }
         ]
@@ -45,6 +109,83 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-research.sh",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "babyclaude",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/task-completion-capture.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "catastrophiser",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-catastrophiser.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "cynic",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-cynic.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "git-perfectionist",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-perfectionist.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "/verify",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-gate.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/ship",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ship-complete.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-plan-completion.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/batch-checkpoint-gate.sh",
+            "timeout": 10
           }
         ]
       }

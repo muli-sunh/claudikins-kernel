@@ -28,6 +28,8 @@ allowed-tools:
   - AskUserQuestion
   - TodoWrite
   - Skill
+skills:
+  - brain-jam-plan
 ---
 
 # /plan Command

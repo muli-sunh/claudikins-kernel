@@ -1,0 +1,14 @@
+# Local Claude state
+.claude/
+
+# Internal docs and plans
+docs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~

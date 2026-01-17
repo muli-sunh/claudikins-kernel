@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Claudikins Kernel - Plan, Execute, Verify, Ship" width="600">
+</p>
+
 # Claudikins Kernel
 
 A structured workflow plugin for Claude Code that enforces quality through human checkpoints, isolated agents, and verification gates.
@@ -158,7 +162,7 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 ## Dependencies
 
-**Required plugins:**
+**Recommended plugins:**
 - `claudikins-tool-executor` - MCP access for research and verification
 - `claudikins-automatic-context-manager` - Context monitoring at 60%
 
@@ -180,9 +184,22 @@ Plugin hooks **merge and run in parallel** - they don't replace each other. This
 
 All hooks from all enabled plugins are additive. The only conflict scenario is if multiple hooks try to block the same action - but our hooks don't block, they only set up directories and state.
 
-### Agent Models
+### Design Philosophy
 
-**All agents in claudikins-kernel use Opus.** The README above mentions Sonnet/Haiku for some agents - that was from initial design. Final implementation uses Opus across the board for quality.
+**Industrial-grade patterns adapted for Claude Code.**
+
+The git-workflow skill draws from distributed systems engineering (microservices, Kubernetes, SRE practices) but adapts these patterns for Claude Code's agent-based execution:
+
+| Distributed Systems Pattern | Claude Code Adaptation |
+|-----------------------------|------------------------|
+| Circuit breakers | Stuck agent detection |
+| Distributed tracing | Execution spans |
+| Load shedding | Batch size limits |
+| Coordinated checkpoints | Batch-boundary saves |
+| Deadline propagation | Task time budgets |
+| Exponential backoff | Retry with jitter |
+
+Same principles, different scale. The goal is reliability through structure - not speed through parallelism.
 
 ---
 
@@ -206,7 +223,7 @@ All hooks from all enabled plugins are additive. The only conflict scenario is i
 
 ```bash
 # Clone into your Claude Code plugins directory
-git clone https://github.com/yourusername/claudikins-kernel ~/.claude/plugins/claudikins-kernel
+git clone https://github.com/elb-pr/claudikins-kernel ~/.claude/plugins/claudikins-kernel
 ```
 
 ---

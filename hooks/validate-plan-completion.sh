@@ -7,6 +7,8 @@
 
 set -euo pipefail
 
+trap 'echo "validate-plan-completion.sh failed at line $LINENO" >&2; exit 1' ERR
+
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 CLAUDE_DIR="$PROJECT_DIR/.claude"
 PLAN_STATE="$CLAUDE_DIR/plan-state.json"

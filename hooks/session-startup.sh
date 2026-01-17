@@ -43,13 +43,23 @@ touch "$CLAUDE_DIR/.gitkeep"
 PLAN_STATE="$CLAUDE_DIR/plan-state.json"
 
 if [ -f "$PLAN_STATE" ]; then
-    STATUS=$(jq -r '.status // "unknown"' "$PLAN_STATE" 2>/dev/null || echo "unknown")
-    SESSION_ID=$(jq -r '.session_id // "unknown"' "$PLAN_STATE" 2>/dev/null || echo "unknown")
-    PHASE=$(jq -r '.phase // "unknown"' "$PLAN_STATE" 2>/dev/null || echo "unknown")
-    STARTED=$(jq -r '.started_at // "unknown"' "$PLAN_STATE" 2>/dev/null || echo "unknown")
+    # Parse plan state, distinguishing between missing fields and parse failures
+    if ! STATUS=$(jq -r '.status // "not_set"' "$PLAN_STATE" 2>&1); then
+        echo "session-startup.sh: WARNING - failed to parse plan-state.json" >&2
+        STATUS="parse_error"
+    fi
+    if ! SESSION_ID=$(jq -r '.session_id // "not_set"' "$PLAN_STATE" 2>&1); then
+        SESSION_ID="parse_error"
+    fi
+    if ! PHASE=$(jq -r '.phase // "not_set"' "$PLAN_STATE" 2>&1); then
+        PHASE="parse_error"
+    fi
+    if ! STARTED=$(jq -r '.started_at // "not_set"' "$PLAN_STATE" 2>&1); then
+        STARTED="parse_error"
+    fi
 
     # Calculate age if possible
-    if [ "$STARTED" != "unknown" ] && [ "$STARTED" != "null" ]; then
+    if [ "$STARTED" != "not_set" ] && [ "$STARTED" != "parse_error" ] && [ "$STARTED" != "null" ]; then
         START_EPOCH=$(date -d "$STARTED" +%s 2>/dev/null || echo "0")
         NOW_EPOCH=$(date +%s)
         AGE_HOURS=$(( (NOW_EPOCH - START_EPOCH) / 3600 ))

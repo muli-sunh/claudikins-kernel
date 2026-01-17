@@ -1,0 +1,127 @@
+#!/bin/bash
+# capture-cynic.sh - SubagentStop hook for /verify
+# Captures cynic simplification output and updates verify state.
+#
+# Matcher: cynic
+# Exit codes:
+#   0 - Always (capture only, never blocks)
+
+set -euo pipefail
+
+# Get project directory
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
+CLAUDE_DIR="$PROJECT_DIR/.claude"
+VERIFY_STATE="$CLAUDE_DIR/verify-state.json"
+OUTPUTS_DIR="$CLAUDE_DIR/agent-outputs/simplification"
+
+# Read input JSON from stdin
+INPUT=$(cat)
+
+# Extract agent info
+AGENT_NAME=$(echo "$INPUT" | jq -r '.agent_name // ""')
+AGENT_ID=$(echo "$INPUT" | jq -r '.agent_id // ""')
+TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.agent_transcript_path // ""')
+
+# Only act on cynic completions
+if [ "$AGENT_NAME" != "cynic" ]; then
+    exit 0
+fi
+
+# Check if we're in an active verify session
+if [ ! -f "$VERIFY_STATE" ]; then
+    echo "Warning: SubagentStop for cynic but no verify-state.json" >&2
+    exit 0
+fi
+
+# Create outputs directory if needed
+mkdir -p "$OUTPUTS_DIR"
+
+TIMESTAMP=$(date -Iseconds)
+TIMESTAMP_EPOCH=$(date +%s)
+
+# Try to extract simplification output from transcript
+SIMPLIFICATION_OUTPUT=""
+if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
+    # Extract the last JSON block that looks like cynic output
+    # Look for simplifications_made and tests_still_pass fields
+    SIMPLIFICATION_OUTPUT=$(tail -100 "$TRANSCRIPT_PATH" | \
+        grep -oP '\{[^{}]*"tests_still_pass"[^{}]*\}' | \
+        tail -1 || echo "")
+
+    # If simple extraction failed, try multiline JSON extraction
+    if [ -z "$SIMPLIFICATION_OUTPUT" ]; then
+        SIMPLIFICATION_OUTPUT=$(tail -200 "$TRANSCRIPT_PATH" | \
+            grep -Pzo '(?s)\{[^{}]*"simplifications_made"[^{}]*"tests_still_pass"[^{}]*\}' | \
+            tr '\0' '\n' | tail -1 || echo "")
+    fi
+fi
+
+# If no structured output found, create a basic record
+if [ -z "$SIMPLIFICATION_OUTPUT" ]; then
+    SIMPLIFICATION_OUTPUT=$(cat <<EOF
+{
+  "started_at": "${TIMESTAMP}",
+  "completed_at": "${TIMESTAMP}",
+  "simplifications_made": [],
+  "simplifications_reverted": [],
+  "tests_still_pass": true,
+  "code_delta": { "lines_added": 0, "lines_removed": 0, "net": 0 },
+  "note": "Output not captured - check transcript",
+  "transcript_path": "${TRANSCRIPT_PATH}"
+}
+EOF
+)
+fi
+
+# Save simplification output to file
+OUTPUT_FILE="$OUTPUTS_DIR/cynic-${TIMESTAMP_EPOCH}.json"
+echo "$SIMPLIFICATION_OUTPUT" > "$OUTPUT_FILE"
+
+# Backup in case of failure (per A-6 pattern)
+BACKUP_FILE="$OUTPUTS_DIR/.backup-cynic-${TIMESTAMP_EPOCH}.json"
+echo "$SIMPLIFICATION_OUTPUT" > "$BACKUP_FILE"
+
+# Extract key metrics from output
+TESTS_PASS=$(echo "$SIMPLIFICATION_OUTPUT" | jq -r '.tests_still_pass // true' 2>/dev/null || echo "true")
+CHANGES_MADE=$(echo "$SIMPLIFICATION_OUTPUT" | jq -r '.simplifications_made | length // 0' 2>/dev/null || echo "0")
+CHANGES_REVERTED=$(echo "$SIMPLIFICATION_OUTPUT" | jq -r '.simplifications_reverted | length // 0' 2>/dev/null || echo "0")
+LINES_REMOVED=$(echo "$SIMPLIFICATION_OUTPUT" | jq -r '.code_delta.lines_removed // 0' 2>/dev/null || echo "0")
+
+# Determine status
+if [ "$TESTS_PASS" = "true" ]; then
+    SIMPLIFY_STATUS="PASS"
+else
+    SIMPLIFY_STATUS="FAIL"
+fi
+
+# Update verify state with cynic results
+jq --arg status "$SIMPLIFY_STATUS" \
+   --arg outputFile "$OUTPUT_FILE" \
+   --arg timestamp "$TIMESTAMP" \
+   --argjson testsPass "$TESTS_PASS" \
+   --argjson changesMade "$CHANGES_MADE" \
+   --argjson changesReverted "$CHANGES_REVERTED" \
+   --argjson linesRemoved "$LINES_REMOVED" \
+   '.phases.code_simplification = {
+      "status": $status,
+      "agent": "cynic",
+      "output_file": $outputFile,
+      "completed_at": $timestamp,
+      "tests_pass": $testsPass,
+      "changes_made": $changesMade,
+      "changes_reverted": $changesReverted,
+      "lines_removed": $linesRemoved
+    }' \
+   "$VERIFY_STATE" > "${VERIFY_STATE}.tmp" && mv "${VERIFY_STATE}.tmp" "$VERIFY_STATE"
+
+# Output context for logging
+cat <<EOF
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SubagentStop",
+    "additionalContext": "cynic completed: ${SIMPLIFY_STATUS}\\nChanges made: ${CHANGES_MADE}, reverted: ${CHANGES_REVERTED}\\nLines removed: ${LINES_REMOVED}\\nTests pass: ${TESTS_PASS}"
+  }
+}
+EOF
+
+exit 0

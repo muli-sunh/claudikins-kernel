@@ -7,8 +7,8 @@
 
 set -euo pipefail
 
-# Don't fail the hook if prettier isn't available
-trap 'exit 0' ERR
+# Don't fail the hook if prettier isn't available, but log for debugging
+trap 'echo "autoformat.sh: non-critical failure at line $LINENO (continuing)" >&2; exit 0' ERR
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 
@@ -40,10 +40,10 @@ case "$EXT" in
     js|jsx|ts|tsx|json|md|mdx|css|scss|less|html|yaml|yml|graphql|vue|svelte)
         # Check if prettier is available
         if command -v npx &> /dev/null; then
-            # Run prettier with --write, ignore errors (unsupported files, etc.)
-            npx prettier --write "$FILE_PATH" 2>/dev/null || true
+            # Run prettier with --write, allow stderr through for debugging
+            npx prettier --write "$FILE_PATH" || true
         elif command -v prettier &> /dev/null; then
-            prettier --write "$FILE_PATH" 2>/dev/null || true
+            prettier --write "$FILE_PATH" || true
         fi
         ;;
     *)
