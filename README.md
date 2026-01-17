@@ -228,6 +228,15 @@ git clone https://github.com/elb-pr/claudikins-kernel ~/.claude/plugins/claudiki
 
 ---
 
+# Add the Claudikins marketplace
+/marketplace add elb-pr/claudikins-marketplace
+
+# Install the plugin
+/plugin install claudikins-tool-executor
+Restart Claude Code. Done.
+
+---
+
 ## Status
 
 Planning complete. Implementation pending.
