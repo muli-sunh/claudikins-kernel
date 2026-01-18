@@ -5,12 +5,5 @@
   "author": {
     "name": "Ethan",
     "email": "elb.pr.contact@gmail.com"
-  },
-  "dependencies": {
-    "optional": [
-      "claudikins-automatic-context-manager",
-      "claudikins-tool-executor",
-      "claudikins-klaus"
-    ]
   }
 }
