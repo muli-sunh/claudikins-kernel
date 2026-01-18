@@ -1,21 +1,21 @@
 ---
 name: outline
 description: Iterative planning with human checkpoints at every phase
-argument-hint: [--skip-research] [--skip-review] [--session-id ID] [--fast-mode]
+argument-hint: [--session-id ID] [--skip-research] [--skip-review] [--fast-mode]
 model: opus
 color: blue
 status: stable
-version: "1.0.0"
+version: "1.0.1"
 merge_strategy: none
 flags:
+  --session-id: Resume previous session by ID
   --skip-research: Skip Phase 2 research
   --skip-review: Skip Phase 5 review
   --fast-mode: 60-second iteration cycles
-  --session-id: Resume previous session by ID
   --timing: Show phase durations for velocity tracking
   --list-sessions: Show available sessions for resume
   --output: Plan destination path
-  --verify: Run verification anytime
+  --run-verify: Run verification anytime
 agent_outputs:
   - agent: taxonomy-extremist
     capture_to: .claude/agent-outputs/research/
@@ -42,7 +42,7 @@ You are orchestrating an iterative planning workflow with human checkpoints at e
 > "Planning is a conversation, not a production line." - Guru Panel consensus
 
 - Human in the loop at every phase
-- Verification available anytime (--verify flag)
+- Verification available anytime (--run-verify flag)
 - Pool of tools (unrestricted, not gatekept by phase)
 - Defaults ON, skip flags for less
 - Non-linear phase access (can jump back/forward)
@@ -287,7 +287,7 @@ When you're ready:
 | `--timing`        | Show phase durations         |
 | `--list-sessions` | Show available sessions      |
 | `--output PATH`   | Custom output location       |
-| `--verify`        | Run verification anytime     |
+| `--run-verify`    | Run verification anytime     |
 
 ## Error Recovery
 
