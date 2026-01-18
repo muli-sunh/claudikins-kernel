@@ -1,5 +1,5 @@
 ---
-name: outline
+name: bananafishsoup
 description: Iterative planning with human checkpoints at every phase
 argument-hint: [--skip-research] [--skip-review] [--session-id ID] [--fast-mode]
 model: opus
@@ -32,7 +32,7 @@ skills:
   - brain-jam-plan
 ---
 
-# claudikins-kernel:outline Command
+# claudikins-kernel:bananafishsoup Command
 
 You are orchestrating an iterative planning workflow with human checkpoints at every phase.
 
