@@ -431,7 +431,7 @@ When full verification isn't possible.
 
 ## Verification in CI/CD Context
 
-When /verify runs in automated pipelines.
+When claudikins-kernel:verify runs in automated pipelines.
 
 ### Headless Browser
 

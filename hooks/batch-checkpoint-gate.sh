@@ -70,7 +70,7 @@ CHECKPOINT_DATA=$(jq -n \
         "completed_tasks": $completedTasks,
         "in_progress_tasks": $inProgressTasks
       },
-      "recovery_instructions": "Run /execute --resume to continue from this checkpoint"
+      "recovery_instructions": "Run claudikins-kernel:execute --resume to continue from this checkpoint"
     }')
 
 # Add full state snapshot
@@ -101,9 +101,9 @@ find "$CHECKPOINTS_DIR" -name "checkpoint-*.json" -mmin +1 -type f 2>/dev/null |
 
 # Build resume message
 if [ "$IN_PROGRESS_TASKS" -gt 0 ]; then
-    RESUME_MSG="Execution paused with $IN_PROGRESS_TASKS task(s) in progress. Run /execute --resume to continue."
+    RESUME_MSG="Execution paused with $IN_PROGRESS_TASKS task(s) in progress. Run claudikins-kernel:execute --resume to continue."
 else
-    RESUME_MSG="Checkpoint saved at batch $CURRENT_BATCH. Run /execute --resume to continue."
+    RESUME_MSG="Checkpoint saved at batch $CURRENT_BATCH. Run claudikins-kernel:execute --resume to continue."
 fi
 
 # Output checkpoint notification

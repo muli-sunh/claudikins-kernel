@@ -35,7 +35,7 @@ skills:
   - shipping-methodology
 ---
 
-# /ship Command
+# claudikins-kernel:ship Command
 
 You are orchestrating a shipping workflow that takes verified code to production with human approval at every stage.
 
@@ -43,7 +43,7 @@ You are orchestrating a shipping workflow that takes verified code to production
 
 > "Ship with confidence, not hope." - Shipping philosophy
 
-- /ship is the final gate after /verify passes
+- claudikins-kernel:ship is the final gate after claudikins-kernel:verify passes
 - GRFP-style: section-by-section approval at every stage
 - Human decides final merge - no auto-merging
 - Code integrity validation ensures we ship what was verified
@@ -99,11 +99,11 @@ The SessionStart hook validates:
 
 **On validation failure:**
 ```
-ERROR: /verify gate check failed
+ERROR: claudikins-kernel:verify gate check failed
 
 Reason: ${FAILURE_REASON}
 
-[Re-run /verify] [Abort]
+[Re-run claudikins-kernel:verify] [Abort]
 ```
 
 **On code integrity failure (C-5, C-7):**
@@ -113,9 +113,9 @@ ERROR: Code has changed since verification
 Verified commit: ${VERIFIED_COMMIT}
 Current commit:  ${CURRENT_COMMIT}
 
-Code must not change between /verify and /ship.
+Code must not change between claudikins-kernel:verify and claudikins-kernel:ship.
 
-[Re-run /verify] [Abort]
+[Re-run claudikins-kernel:verify] [Abort]
 ```
 
 ## Stage 1: Pre-Ship Review
@@ -161,7 +161,7 @@ On "Review Evidence":
 
 On "Back to Verify":
 - Set `status = "aborted"`
-- Output: "Run `/verify` to re-verify"
+- Output: "Run `claudikins-kernel:verify` to re-verify"
 
 ## Stage 2: Commit Strategy
 

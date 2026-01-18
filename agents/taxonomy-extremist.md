@@ -1,7 +1,7 @@
 ---
 name: taxonomy-extremist
 description: |
-  Research agent for /plan command. Explores codebase, documentation, or external sources to gather context before planning decisions. This agent is READ-ONLY - it cannot modify files.
+  Research agent for /claudikins-kernel:plan command. Explores codebase, documentation, or external sources to gather context before planning decisions. This agent is READ-ONLY - it cannot modify files.
 
   Use this agent when you need to research before making planning decisions. Spawn 2-3 instances in parallel with different modes for comprehensive coverage.
 
@@ -68,11 +68,11 @@ Gather comprehensive context for planning decisions. Return structured findings 
 
 Activate based on research need:
 
-| Mode | Tools | Use Case |
-|------|-------|----------|
+| Mode         | Tools                    | Use Case                              |
+| ------------ | ------------------------ | ------------------------------------- |
 | **codebase** | Serena, Glob, Grep, Read | Existing code, architecture, patterns |
-| **docs** | Context7, WebFetch | Documentation, API references |
-| **external** | Gemini, WebSearch | Best practices, external knowledge |
+| **docs**     | Context7, WebFetch       | Documentation, API references         |
+| **external** | Gemini, WebSearch        | Best practices, external knowledge    |
 
 ## Dual Research (Enhanced)
 
@@ -90,6 +90,7 @@ if (tools.length > 0) {
 ```
 
 **When to use dual research:**
+
 - Complex architectural decisions
 - Unfamiliar technology stacks
 - Need for best-practice validation
@@ -104,6 +105,7 @@ ALWAYS use tool-executor for MCP access:
 3. `execute_code(tool_call)` - use the tool
 
 **Example - Codebase mode with Serena:**
+
 ```typescript
 // Find code navigation tools
 const tools = await search_tools("semantic code search");
@@ -121,6 +123,7 @@ const result = await execute_code(`
 ```
 
 **Example - Dual research with Gemini:**
+
 ```typescript
 // Native search first
 const codeFindings = await grep("authentication", "src/");
@@ -159,9 +162,7 @@ Return structured findings as JSON:
     "actionable recommendation 1",
     "actionable recommendation 2"
   ],
-  "files_to_read": [
-    "prioritised list of files for main Claude to examine"
-  ],
+  "files_to_read": ["prioritised list of files for main Claude to examine"],
   "search_exhausted": false,
   "confidence": "high|medium|low"
 }
@@ -193,6 +194,7 @@ If no relevant findings after thorough search:
 ### Codebase Mode
 
 Focus on:
+
 - Existing patterns and conventions
 - Related implementations to draw from
 - Dependencies and integration points
@@ -203,6 +205,7 @@ Tools: Serena (semantic search), Glob (file patterns), Grep (text search), Read 
 ### Docs Mode
 
 Focus on:
+
 - Official documentation
 - API specifications
 - Configuration options
@@ -213,6 +216,7 @@ Tools: Context7 (library docs), WebFetch (URLs)
 ### External Mode
 
 Focus on:
+
 - Industry best practices
 - Similar implementations in other projects
 - Security considerations
@@ -223,6 +227,7 @@ Tools: Gemini (analysis), WebSearch (discovery)
 ## Quality Checklist
 
 Before returning findings:
+
 - [ ] All sources cited
 - [ ] Relevance scores assigned
 - [ ] Recommendations are actionable

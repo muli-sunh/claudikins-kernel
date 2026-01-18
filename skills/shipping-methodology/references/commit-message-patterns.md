@@ -1,6 +1,6 @@
 # Commit Message Patterns
 
-Complete guide to writing effective commit messages for /ship.
+Complete guide to writing effective commit messages for claudikins-kernel:ship.
 
 ## Format
 

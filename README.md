@@ -38,13 +38,13 @@ Restart Claude Code. Done.
 
 ## The Big Picture
 
-You have 4 commands that flow in sequence: `/plan` → `/execute` → `/verify` → `/ship`
+You have 4 commands that flow in sequence: `claudikins-kernel:plan` → `claudikins-kernel:execute` → `claudikins-kernel:verify` → `claudikins-kernel:ship`
 
 Each command has gates that prevent you skipping steps. You can't execute without a plan, can't verify without executed code, can't ship without verification passing. The system enforces this.
 
 ---
 
-## /plan - "Let's figure out what we're building"
+## claudikins-kernel:plan - "Let's figure out what we're building"
 
 **Purpose:** Iterative brainstorming with Claude until you have a solid plan.
 
@@ -62,13 +62,13 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 6. **Review phase** - Optionally Klaus (the opinionated debugger) or a plan-reviewer looks at the whole thing and pokes holes.
 
-**Output:** A plan.md file with a task table that /execute can parse. The table has task numbers, descriptions, file lists, dependencies, and batch assignments.
+**Output:** A plan.md file with a task table that claudikins-kernel:execute can parse. The table has task numbers, descriptions, file lists, dependencies, and batch assignments.
 
 **Key agent:** taxonomy-extremist (Sonnet, read-only, runs in parallel)
 
 ---
 
-## /execute - "Let's build it"
+## claudikins-kernel:execute - "Let's build it"
 
 **Purpose:** Execute the plan task by task with fresh agents and code review.
 
@@ -101,13 +101,13 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 ---
 
-## /verify - "Does it actually work?"
+## claudikins-kernel:verify - "Does it actually work?"
 
 **Purpose:** Claude must SEE the code working, not just trust that tests pass.
 
 **How it works:**
 
-1. **Gate check** - Won't run unless /execute completed. Checks execute-state.json exists.
+1. **Gate check** - Won't run unless claudikins-kernel:execute completed. Checks execute-state.json exists.
 
 2. **Automated quality checks:**
    - **Tests** - Runs your test suite. If tests fail, tries again to detect flaky tests. If still fails, you decide: fix, skip, or abort.
@@ -128,7 +128,7 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 6. **Human checkpoint** - Shows comprehensive report. You decide: ready to ship, needs work, or accept with caveats.
 
-**Output:** verify-state.json with `unlock_ship: true` if approved. Also generates a file manifest (SHA256 hashes of all source files) so /ship can detect if code changed after verification.
+**Output:** verify-state.json with `unlock_ship: true` if approved. Also generates a file manifest (SHA256 hashes of all source files) so claudikins-kernel:ship can detect if code changed after verification.
 
 **Key agents:**
 - catastrophiser (Opus, sees code running, captures evidence)
@@ -136,13 +136,13 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 ---
 
-## /ship - "Send it"
+## claudikins-kernel:ship - "Send it"
 
 **Purpose:** Merge to main with proper docs, commit messages, and PR.
 
 **How it works:**
 
-1. **Gate check** - Won't run unless /verify passed AND code hasn't changed since. Checks commit hash and file manifest match.
+1. **Gate check** - Won't run unless claudikins-kernel:verify passed AND code hasn't changed since. Checks commit hash and file manifest match.
 
 2. **Pre-ship review** - Shows summary of what's being shipped, which branches will merge, verification evidence. You confirm ready.
 
@@ -168,7 +168,7 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 **File locking:** All state writes use flock to prevent race conditions if you somehow have parallel sessions.
 
-**Code integrity:** /verify generates file hashes, /ship validates they haven't changed. Can't ship code that wasn't verified.
+**Code integrity:** claudikins-kernel:verify generates file hashes, claudikins-kernel:ship validates they haven't changed. Can't ship code that wasn't verified.
 
 **Session management:** Session IDs track everything. If you resume a stale session (4+ hours), warns you research might be outdated.
 
@@ -180,13 +180,13 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 | Agent | Model | Purpose | Used In |
 |-------|-------|---------|---------|
-| taxonomy-extremist | Opus | Read-only research | /plan |
-| babyclaude | Opus | Implement single task | /execute |
-| spec-reviewer | Opus | Did it match the spec? | /execute |
-| code-reviewer | Opus | Is the code good? | /execute |
-| catastrophiser | Opus | See code actually working | /verify |
-| cynic | Opus | Polish and simplify | /verify |
-| git-perfectionist | Opus | Update docs for shipping | /ship |
+| taxonomy-extremist | Opus | Read-only research | claudikins-kernel:plan |
+| babyclaude | Opus | Implement single task | claudikins-kernel:execute |
+| spec-reviewer | Opus | Did it match the spec? | claudikins-kernel:execute |
+| code-reviewer | Opus | Is the code good? | claudikins-kernel:execute |
+| catastrophiser | Opus | See code actually working | claudikins-kernel:verify |
+| cynic | Opus | Polish and simplify | claudikins-kernel:verify |
+| git-perfectionist | Opus | Update docs for shipping | claudikins-kernel:ship |
 
 ---
 
@@ -254,7 +254,7 @@ Same principles, different scale. The goal is reliability through structure - no
 
 Planning complete. Implementation pending.
 
-See `docs/plans/` for detailed architecture documents.
+See `docsclaudikins-kernel:plans/` for detailed architecture documents.
 
 ---
 

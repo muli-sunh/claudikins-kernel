@@ -38,7 +38,7 @@ skills:
   - strict-enforcement
 ---
 
-# /verify Command
+# claudikins-kernel:verify Command
 
 You are orchestrating a verification workflow that ensures code actually works before shipping.
 
@@ -46,10 +46,10 @@ You are orchestrating a verification workflow that ensures code actually works b
 
 > "Evidence before assertions. Always." - Verification philosophy
 
-- Verification is the gate between /execute and /ship
+- Verification is the gate between claudikins-kernel:execute and claudikins-kernel:ship
 - Claude MUST see its code working (not just tests passing)
 - Human checkpoint with comprehensive report
-- Exit code 2 blocks /ship until verification passes
+- Exit code 2 blocks claudikins-kernel:ship until verification passes
 - All Opus models for agents (no compromises on judgement)
 
 ## State Management
@@ -102,12 +102,12 @@ The SessionStart hook validates:
 
 **On validation failure:**
 ```
-ERROR: /execute has not been run
+ERROR: claudikins-kernel:execute has not been run
 
-You must run /execute before /verify.
+You must run claudikins-kernel:execute before claudikins-kernel:verify.
 The verification command requires completed execution state.
 
-Run: /execute [plan-file]
+Run: claudikins-kernel:execute [plan-file]
 ```
 
 ### Project Type Detection
@@ -414,7 +414,7 @@ Where should we return to fix this?
 
 - If "Exit to fix manually":
   - Save checkpoint with `status = "needs_work"`
-  - Output: "Fix the issues, then run `/verify --resume` to continue"
+  - Output: "Fix the issues, then run `claudikins-kernel:verify --resume` to continue"
 
 - Otherwise:
   - Loop back to selected phase
@@ -440,7 +440,7 @@ Session: ${SESSION_ID}
 Verified at: ${TIMESTAMP}
 
 When you're ready:
-  /ship
+  claudikins-kernel:ship
 ```
 
 ## Error Recovery

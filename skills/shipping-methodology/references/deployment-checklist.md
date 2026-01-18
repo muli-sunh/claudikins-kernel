@@ -1,12 +1,12 @@
 # Deployment Checklist
 
-Pre-deploy and post-merge verification for /ship.
+Pre-deploy and post-merge verification for claudikins-kernel:ship.
 
 ## Pre-Ship Checklist
 
 ### Verification Gate
 
-- [ ] /verify has been run
+- [ ] claudikins-kernel:verify has been run
 - [ ] `unlock_ship == true` in verify-state.json
 - [ ] All automated checks passed (tests, lint, types)
 - [ ] Human checkpoint approved

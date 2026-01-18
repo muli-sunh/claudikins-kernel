@@ -1,6 +1,6 @@
 # PR Creation Strategy
 
-Templates and patterns for creating pull requests during /ship.
+Templates and patterns for creating pull requests during claudikins-kernel:ship.
 
 ## PR Title Format
 

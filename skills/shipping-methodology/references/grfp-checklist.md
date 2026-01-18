@@ -18,7 +18,7 @@ GRFP (GitHub README Focused Pipeline) is a methodology from the github-readme pl
 
 ## git-perfectionist Uses
 
-For /ship documentation updates, git-perfectionist uses:
+For claudikins-kernel:ship documentation updates, git-perfectionist uses:
 
 1. **deep-dive** - Analyse current README, CHANGELOG
 2. **pen-wielding** - Write updates with section approval

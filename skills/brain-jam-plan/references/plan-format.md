@@ -1,6 +1,6 @@
 # Plan Output Format
 
-Plans must follow this structure to be compatible with `/execute`.
+Plans must follow this structure to be compatible with `claudikins-kernel:execute`.
 
 ## Required Sections
 
@@ -136,12 +136,12 @@ How to verify the implementation works.
 
 ## File Naming
 
-Save plans to: `.claude/plans/plan-{session-id}.md`
+Save plans to: `.claude/plansclaudikins-kernel:plan-{session-id}.md`
 
-Example: `.claude/plans/plan-2026-01-16-1430.md`
+Example: `.claude/plansclaudikins-kernel:plan-2026-01-16-1430.md`
 
 ## Machine-Readable Markers
 
-The `<!-- EXECUTION_TASKS_START -->` and `<!-- EXECUTION_TASKS_END -->` markers are **required**. The `/execute` command parses these to extract the task table.
+The `<!-- EXECUTION_TASKS_START -->` and `<!-- EXECUTION_TASKS_END -->` markers are **required**. The `claudikins-kernel:execute` command parses these to extract the task table.
 
-If markers are missing or malformed, `/execute` will fail with an error.
+If markers are missing or malformed, `claudikins-kernel:execute` will fail with an error.

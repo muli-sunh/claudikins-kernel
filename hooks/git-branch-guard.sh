@@ -55,7 +55,7 @@ if echo "$COMMAND" | grep -qE 'git\s+checkout\s' && ! echo "$COMMAND" | grep -qE
         echo "" >&2
         echo "Command: $COMMAND" >&2
         echo "" >&2
-        echo "During /execute, agents must stay on their task branch." >&2
+        echo "During claudikins-kernel:execute, agents must stay on their task branch." >&2
         echo "Allowed: git checkout -b <new-branch> (create new)" >&2
         echo "Allowed: git checkout -- <file> (restore file)" >&2
         echo "" >&2
@@ -70,7 +70,7 @@ if echo "$COMMAND" | grep -qE 'git\s+switch\s'; then
     echo "" >&2
     echo "Command: $COMMAND" >&2
     echo "" >&2
-    echo "During /execute, agents must stay on their task branch." >&2
+    echo "During claudikins-kernel:execute, agents must stay on their task branch." >&2
     exit 2
 fi
 

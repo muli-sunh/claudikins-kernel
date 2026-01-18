@@ -6,7 +6,7 @@ Preventing duplicate branch names across parallel tasks or sessions.
 
 ### Scenario 1: Parallel Session Collision
 
-Two Claude sessions running `/execute` simultaneously create branches for the same task:
+Two Claude sessions running `claudikins-kernel:execute` simultaneously create branches for the same task:
 
 ```
 Session A: git checkout -b execute/task-3-auth-abc123
@@ -169,7 +169,7 @@ Branches older than session timeout (4 hours) with no activity:
 #!/bin/bash
 # Identify stale execute branches
 
-git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/heads/execute/ | while read branch timestamp; do
+git for-each-ref --format='%(refname:short) %(committerdate:unix)' refs/headsclaudikins-kernel:execute/ | while read branch timestamp; do
   age=$(($(date +%s) - timestamp))
   if [ $age -gt 14400 ]; then  # 4 hours
     echo "Stale branch: $branch ($(($age/3600)) hours old)"
@@ -184,7 +184,7 @@ done
 If session crashes and branches remain:
 
 ```
-/execute --resume
+claudikins-kernel:execute --resume
 
 Found orphaned branches from crashed session:
 - execute/task-3-auth-middleware-a1b2c3d4 (2 commits)

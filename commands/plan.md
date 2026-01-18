@@ -32,7 +32,7 @@ skills:
   - brain-jam-plan
 ---
 
-# /plan Command
+# claudikins-kernel:plan Command
 
 You are orchestrating an iterative planning workflow with human checkpoints at every phase.
 
@@ -192,7 +192,7 @@ Section-by-section drafting with approval after each section.
 4. If revisions needed, iterate
 5. Move to next section only after approval
 
-**Task format for /execute compatibility:**
+**Task format for claudikins-kernel:execute compatibility:**
 ```markdown
 <!-- EXECUTION_TASKS_START -->
 | # | Task | Files | Deps | Batch |
@@ -239,16 +239,16 @@ Task(klaus, {
 
 ## Output
 
-Save plan to specified path (default: `.claude/plans/plan-${session_id}.md`)
+Save plan to specified path (default: `.claude/plansclaudikins-kernel:plan-${session_id}.md`)
 
-Include machine-readable task markers for /execute compatibility.
+Include machine-readable task markers for claudikins-kernel:execute compatibility.
 
 **Final message:**
 ```
 Done! Plan saved to [path]
 
 When you're ready:
-  /execute [plan-path]
+  claudikins-kernel:execute [plan-path]
 ```
 
 ## Flag Behaviours

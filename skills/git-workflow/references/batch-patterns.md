@@ -134,7 +134,7 @@ Checkpointing saves computation state to enable recovery without full restart.
 | **Uncoordinated** | Each agent checkpoints independently | Throughput: no sync overhead | Domino Effect: cascading rollback on recovery |
 | **Asynchronous** | State snapshotted in background | Efficiency: minimal processing impact | Complexity: requires sophisticated state management |
 
-**For /execute:** We use **Coordinated Checkpointing** at batch boundaries.
+**For claudikins-kernel:execute:** We use **Coordinated Checkpointing** at batch boundaries.
 
 ```
 Batch 1 complete → Checkpoint (all agent states saved)
@@ -337,7 +337,7 @@ Remaining capacity insufficient for safe completion.
 At any time, human can:
 
 ```
-/execute --abort
+claudikins-kernel:execute --abort
 
 This will:
 1. Complete current tool operation

@@ -185,7 +185,7 @@ fi
 
 ### Graceful Shutdown
 
-When `/execute --abort` or context dies:
+When `claudikins-kernel:execute --abort` or context dies:
 
 ```bash
 # In batch-checkpoint-gate.sh
@@ -246,4 +246,4 @@ Bulk actions:
 
 **Wrong:** Leave orphaned branches accumulating forever.
 
-**Right:** Periodic cleanup prompts during `/execute --resume`.
+**Right:** Periodic cleanup prompts during `claudikins-kernel:execute --resume`.

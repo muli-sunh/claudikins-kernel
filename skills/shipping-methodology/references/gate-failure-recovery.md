@@ -8,37 +8,37 @@ The gate can fail for several reasons:
 
 | Failure | Error Message | Recovery |
 |---------|---------------|----------|
-| No verify state | "/verify has not been run" | Run /verify first |
-| Not unlocked | "/verify did not pass or was not approved" | Complete /verify |
-| Commit mismatch | "Code changed since verification" | Re-run /verify |
-| Manifest mismatch | "Source files changed after verification" | Re-run /verify |
-| Corrupted state | "verify-state.json corrupted" | Re-run /verify |
+| No verify state | "claudikins-kernel:verify has not been run" | Run claudikins-kernel:verify first |
+| Not unlocked | "claudikins-kernel:verify did not pass or was not approved" | Complete claudikins-kernel:verify |
+| Commit mismatch | "Code changed since verification" | Re-run claudikins-kernel:verify |
+| Manifest mismatch | "Source files changed after verification" | Re-run claudikins-kernel:verify |
+| Corrupted state | "verify-state.json corrupted" | Re-run claudikins-kernel:verify |
 
 ## Recovery Flows
 
 ### Verify State Missing
 
 ```
-ERROR: /verify has not been run
+ERROR: claudikins-kernel:verify has not been run
 
-Run /verify before /ship
+Run claudikins-kernel:verify before claudikins-kernel:ship
 
-[Run /verify now] [Abort]
+[Run claudikins-kernel:verify now] [Abort]
 ```
 
 **Recovery:**
 ```bash
 # Run verification
-/verify
+claudikins-kernel:verify
 
 # Then retry ship
-/ship
+claudikins-kernel:ship
 ```
 
 ### Unlock Flag Not Set
 
 ```
-ERROR: /verify did not pass or was not approved
+ERROR: claudikins-kernel:verify did not pass or was not approved
 
 Human must approve verification before shipping.
 
@@ -46,17 +46,17 @@ Current verify state:
   all_checks_passed: true
   human_checkpoint.decision: null
 
-[Resume /verify for human checkpoint] [Abort]
+[Resume claudikins-kernel:verify for human checkpoint] [Abort]
 ```
 
 **Recovery:**
 ```bash
 # Resume verification for approval
-/verify --resume
+claudikins-kernel:verify --resume
 
 # Approve at human checkpoint
 # Then retry ship
-/ship
+claudikins-kernel:ship
 ```
 
 ### Commit Hash Mismatch (C-5)
@@ -71,18 +71,18 @@ Changes since verification:
 - 2 commits added
 - 5 files modified
 
-[View changes] [Re-run /verify] [Abort]
+[View changes] [Re-run claudikins-kernel:verify] [Abort]
 ```
 
 **This happens when:**
-- Additional commits made after /verify
-- Branch rebased after /verify
+- Additional commits made after claudikins-kernel:verify
+- Branch rebased after claudikins-kernel:verify
 - Merge from main pulled in changes
 
 **Recovery:**
 ```bash
 # Option 1: Re-verify current state
-/verify
+claudikins-kernel:verify
 
 # Option 2: View what changed
 git log abc123def..HEAD --oneline
@@ -103,12 +103,12 @@ Modified files:
 - src/auth/middleware.ts
 - src/api/routes.ts
 
-[View changes] [Re-run /verify] [Abort]
+[View changes] [Re-run claudikins-kernel:verify] [Abort]
 ```
 
 **This happens when:**
-- Files edited after /verify
-- Auto-formatter ran after /verify
+- Files edited after claudikins-kernel:verify
+- Auto-formatter ran after claudikins-kernel:verify
 - IDE modified files
 
 **Recovery:**
@@ -120,11 +120,11 @@ git diff
 # Option 1: Commit changes and re-verify
 git add .
 git commit -m "chore: post-verify fixes"
-/verify
+claudikins-kernel:verify
 
 # Option 2: Discard changes
 git checkout -- .
-/ship
+claudikins-kernel:ship
 ```
 
 ### Corrupted State File
@@ -134,7 +134,7 @@ ERROR: verify-state.json corrupted
 
 The verification state file is not valid JSON.
 
-[Re-run /verify] [View raw file] [Abort]
+[Re-run claudikins-kernel:verify] [View raw file] [Abort]
 ```
 
 **This happens when:**
@@ -146,7 +146,7 @@ The verification state file is not valid JSON.
 ```bash
 # Option 1: Re-run verification from scratch
 rm .claude/verify-state.json
-/verify
+claudikins-kernel:verify
 
 # Option 2: Check for backup
 ls .claude/verify-state.json.bak
@@ -201,18 +201,18 @@ find . \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' \
 
 ### Avoid Post-Verify Changes
 
-After /verify passes:
+After claudikins-kernel:verify passes:
 
 1. Don't make code changes
 2. Don't run formatters
 3. Don't pull/merge
-4. Run /ship immediately
+4. Run claudikins-kernel:ship immediately
 
 ### Lock Working Directory
 
 ```bash
 # After verify, immediately ship
-/verify && /ship
+claudikins-kernel:verify && claudikins-kernel:ship
 ```
 
 ### Use Atomic Ship Flow
@@ -220,18 +220,18 @@ After /verify passes:
 The ideal flow is:
 
 ```
-/verify
+claudikins-kernel:verify
   └── Human approves
-      └── /ship (immediately)
+      └── claudikins-kernel:ship (immediately)
           └── Merge
 ```
 
 Don't:
 ```
-/verify
+claudikins-kernel:verify
   └── Human approves
       └── "Let me just fix this one thing..."  # NO!
-          └── /ship fails
+          └── claudikins-kernel:ship fails
 ```
 
 ## Manual Override
@@ -255,7 +255,7 @@ jq --arg h "$NEW_HASH" '.verified_manifest = $h' \
 **Use only when:**
 - You understand why gate failed
 - You've verified changes are safe
-- Re-running /verify is impractical
+- Re-running claudikins-kernel:verify is impractical
 
 **Never use to:**
 - Skip actual verification

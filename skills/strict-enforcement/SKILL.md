@@ -1,6 +1,6 @@
 ---
 name: strict-enforcement
-description: Use when running /verify, checking implementation quality, deciding pass/fail verdicts, or enforcing cross-command gates — requires actual evidence of code working, not just passing tests
+description: Use when running claudikins-kernel:verify, checking implementation quality, deciding pass/fail verdicts, or enforcing cross-command gates — requires actual evidence of code working, not just passing tests
 ---
 
 # Strict Enforcement Verification Methodology
@@ -9,7 +9,7 @@ description: Use when running /verify, checking implementation quality, deciding
 
 Use this skill when you need to:
 
-- Run the `/verify` command
+- Run the `claudikins-kernel:verify` command
 - Validate implementation before shipping
 - Decide pass/fail verdicts
 - Check code integrity after changes
@@ -25,7 +25,7 @@ Never claim code works without seeing it work. Tests passing is not enough. Clau
 
 1. **See it working** - Screenshots, curl responses, CLI output. Actual evidence.
 2. **Human checkpoint** - No auto-shipping. Human reviews evidence and decides.
-3. **Exit code 2 gates** - Verification failures block /ship. No exceptions.
+3. **Exit code 2 gates** - Verification failures block claudikins-kernel:ship. No exceptions.
 
 ## Verification Phases
 
@@ -175,11 +175,11 @@ ALL_PASSED=$(jq -r '.all_checks_passed' "$STATE")
 HUMAN_APPROVED=$(jq -r '.human_checkpoint.decision' "$STATE")
 
 if [ "$ALL_PASSED" != "true" ]; then
-  exit 2  # Blocks /ship
+  exit 2  # Blocks claudikins-kernel:ship
 fi
 
 if [ "$HUMAN_APPROVED" != "ready_to_ship" ]; then
-  exit 2  # Blocks /ship
+  exit 2  # Blocks claudikins-kernel:ship
 fi
 ```
 
@@ -192,20 +192,20 @@ find . \( -name '*.ts' -o -name '*.py' -o -name '*.rs' \) \
   | xargs sha256sum > .claude/verify-manifest.txt
 ```
 
-This lets /ship detect if code was modified after verification.
+This lets claudikins-kernel:ship detect if code was modified after verification.
 
 ## Cross-Command Gate (C-14)
 
-/verify requires /execute to have completed:
+claudikins-kernel:verify requires claudikins-kernel:execute to have completed:
 
 ```bash
 if [ ! -f "$EXECUTE_STATE" ]; then
-  echo "ERROR: /execute has not been run"
+  echo "ERROR: claudikins-kernel:execute has not been run"
   exit 2
 fi
 ```
 
-This enforces the /plan → /execute → /verify → /ship flow.
+This enforces the claudikins-kernel:plan → claudikins-kernel:execute → claudikins-kernel:verify → claudikins-kernel:ship flow.
 
 ## Agent Integration
 

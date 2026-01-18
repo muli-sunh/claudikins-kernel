@@ -43,12 +43,12 @@ fi
 # Check execute-state.json exists
 if [ ! -f "$EXECUTE_STATE" ]; then
     cat <<EOF >&2
-ERROR: /execute has not been run
+ERROR: claudikins-kernel:execute has not been run
 
-You must run /execute before /verify.
+You must run claudikins-kernel:execute before claudikins-kernel:verify.
 The verification command requires completed execution state.
 
-Run: /execute [plan-file]
+Run: claudikins-kernel:execute [plan-file]
 EOF
     exit 2
 fi
@@ -57,12 +57,12 @@ fi
 EXECUTE_STATUS=$(jq -r '.status // "unknown"' "$EXECUTE_STATE" 2>/dev/null || echo "unknown")
 if [ "$EXECUTE_STATUS" != "completed" ]; then
     cat <<EOF >&2
-ERROR: /execute did not complete successfully
+ERROR: claudikins-kernel:execute did not complete successfully
 
 Current status: ${EXECUTE_STATUS}
 
-/verify requires /execute to have status "completed".
-Either complete the execution or use /execute --resume.
+claudikins-kernel:verify requires claudikins-kernel:execute to have status "completed".
+Either complete the execution or use claudikins-kernel:execute --resume.
 EOF
     exit 2
 fi

@@ -13,7 +13,7 @@
         ]
       },
       {
-        "matcher": "/verify",
+        "matcher": "claudikins-kernel:verify",
         "hooks": [
           {
             "type": "command",
@@ -23,7 +23,7 @@
         ]
       },
       {
-        "matcher": "/ship",
+        "matcher": "claudikins-kernel:ship",
         "hooks": [
           {
             "type": "command",
@@ -35,7 +35,7 @@
     ],
     "UserPromptSubmit": [
       {
-        "matcher": "/execute",
+        "matcher": "claudikins-kernel:execute",
         "hooks": [
           {
             "type": "command",
@@ -45,7 +45,7 @@
         ]
       },
       {
-        "matcher": "/execute.*(--status|status)",
+        "matcher": "claudikins-kernel:execute.*(--status|status)",
         "hooks": [
           {
             "type": "command",
@@ -155,7 +155,7 @@
     ],
     "Stop": [
       {
-        "matcher": "/verify",
+        "matcher": "claudikins-kernel:verify",
         "hooks": [
           {
             "type": "command",
@@ -165,7 +165,7 @@
         ]
       },
       {
-        "matcher": "/ship",
+        "matcher": "claudikins-kernel:ship",
         "hooks": [
           {
             "type": "command",
@@ -175,13 +175,18 @@
         ]
       },
       {
-        "matcher": "*",
+        "matcher": "claudikins-kernel:plan",
         "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-plan-completion.sh",
             "timeout": 10
-          },
+          }
+        ]
+      },
+      {
+        "matcher": "claudikins-kernel:execute",
+        "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/batch-checkpoint-gate.sh",

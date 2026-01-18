@@ -1,6 +1,6 @@
 ---
 name: shipping-methodology
-description: Use when running /ship, preparing PRs, writing changelogs, deciding merge strategy, or handling CI failures — enforces GRFP-style iterative approval, code integrity validation, and human-gated merges
+description: Use when running claudikins-kernel:ship, preparing PRs, writing changelogs, deciding merge strategy, or handling CI failures — enforces GRFP-style iterative approval, code integrity validation, and human-gated merges
 ---
 
 # Shipping Methodology
@@ -9,7 +9,7 @@ description: Use when running /ship, preparing PRs, writing changelogs, deciding
 
 Use this skill when you need to:
 
-- Run the `/ship` command
+- Run the `claudikins-kernel:ship` command
 - Prepare commit messages and PR descriptions
 - Update changelogs and documentation
 - Decide merge strategy (squash vs preserve)
@@ -24,7 +24,7 @@ Shipping is the final gate. Apply GRFP-style iterative workflow to every stage.
 
 ### The Five Principles
 
-1. **Gate check first** - /verify must have passed. No exceptions.
+1. **Gate check first** - claudikins-kernel:verify must have passed. No exceptions.
 2. **Code integrity** - Ship exactly what was verified. No sneaky changes.
 3. **GRFP everywhere** - Section-by-section approval at every stage.
 4. **Human decides** - No auto-merging. Human approves final merge.
@@ -38,7 +38,7 @@ Show what's being shipped. Human confirms ready.
 
 | Check | What to Show |
 |-------|--------------|
-| Verification status | All phases PASS from /verify |
+| Verification status | All phases PASS from claudikins-kernel:verify |
 | Branches to merge | List all execute/task-* branches |
 | Evidence summary | Screenshots, curl responses from catastrophiser |
 | Code delta | Lines added/removed, files changed |
@@ -205,8 +205,8 @@ Agents under pressure find excuses. These are all violations:
 
 | Excuse | Reality |
 |--------|---------|
-| "Verify passed yesterday, close enough" | Stale verification = no verification. Re-run /verify. |
-| "Just a tiny fix after verify, no big deal" | Any change after verify invalidates it. Re-run /verify. |
+| "Verify passed yesterday, close enough" | Stale verification = no verification. Re-run claudikins-kernel:verify. |
+| "Just a tiny fix after verify, no big deal" | Any change after verify invalidates it. Re-run claudikins-kernel:verify. |
 | "CI is flaky, I'll merge anyway" | Flaky CI hides real failures. Fix or explicitly skip with caveat. |
 | "It's just a typo, skip the PR" | All changes go through PR. No exceptions. |
 | "Both reviewers passed, auto-merge is fine" | Human approves final merge. Always. |
@@ -234,21 +234,21 @@ If you're thinking any of these, you're about to violate the methodology:
 
 ## Gate Check Pattern (CRITICAL)
 
-The ship-init.sh hook enforces the /verify gate with code integrity validation.
+The ship-init.sh hook enforces the claudikins-kernel:verify gate with code integrity validation.
 
 ### Required Checks
 
 ```bash
 # 1. Verify state exists
 if [ ! -f "$VERIFY_STATE" ]; then
-  echo "ERROR: /verify has not been run"
+  echo "ERROR: claudikins-kernel:verify has not been run"
   exit 2
 fi
 
 # 2. Unlock flag is set
 UNLOCK=$(jq -r '.unlock_ship // false' "$VERIFY_STATE")
 if [ "$UNLOCK" != "true" ]; then
-  echo "ERROR: /verify did not pass or was not approved"
+  echo "ERROR: claudikins-kernel:verify did not pass or was not approved"
   exit 2
 fi
 ```
@@ -282,7 +282,7 @@ Code has changed since verification.
 Verified commit: abc123
 Current commit:  def456
 
-[Re-run /verify] [Abort]
+[Re-run claudikins-kernel:verify] [Abort]
 ```
 
 ## Commit Message Patterns
@@ -433,7 +433,7 @@ See [breaking-change-detection.md](references/breaking-change-detection.md) for 
 
 **Don't do these:**
 
-- Shipping without /verify passing
+- Shipping without claudikins-kernel:verify passing
 - Modifying code after verification
 - Force pushing to main/master
 - Auto-merging without human approval

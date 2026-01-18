@@ -1,7 +1,7 @@
 ---
 name: conflict-resolver
 description: |
-  Merge conflict resolution agent for /execute command. Analyses git merge conflicts and proposes resolutions. Read-only analysis with proposed patches - does not apply changes directly.
+  Merge conflict resolution agent for /claudikins-kernel:execute command. Analyses git merge conflicts and proposes resolutions. Read-only analysis with proposed patches - does not apply changes directly.
 
   Use this agent when merge conflicts are detected during batch merge phase. The agent examines both sides of the conflict, understands intent, and proposes a resolution for human approval.
 
@@ -77,6 +77,7 @@ cat <conflicting-file>
 ```
 
 Identify the conflict markers:
+
 ```
 <<<<<<< HEAD
 [target branch version]
@@ -89,19 +90,19 @@ Identify the conflict markers:
 
 For each side, determine:
 
-| Side | Question |
-|------|----------|
+| Side              | Question                                                 |
+| ----------------- | -------------------------------------------------------- |
 | **HEAD (target)** | What was the original intent? What functionality exists? |
-| **Source (task)** | What was the task trying to add/change? |
+| **Source (task)** | What was the task trying to add/change?                  |
 
 ### Step 3: Identify Conflict Type
 
-| Type | Description | Resolution Strategy |
-|------|-------------|---------------------|
-| **Additive** | Both sides add different things | Combine both additions |
-| **Modificative** | Both modify same lines differently | Merge logic carefully |
-| **Deletion** | One deletes, one modifies | Understand if deletion was intentional |
-| **Structural** | Different refactoring approaches | Pick one structure, port the other's logic |
+| Type             | Description                        | Resolution Strategy                        |
+| ---------------- | ---------------------------------- | ------------------------------------------ |
+| **Additive**     | Both sides add different things    | Combine both additions                     |
+| **Modificative** | Both modify same lines differently | Merge logic carefully                      |
+| **Deletion**     | One deletes, one modifies          | Understand if deletion was intentional     |
+| **Structural**   | Different refactoring approaches   | Pick one structure, port the other's logic |
 
 ### Step 4: Propose Resolution
 
@@ -185,21 +186,23 @@ Resolution: Combine logic from both:
 
 ## Confidence Scoring
 
-| Confidence | Meaning |
-|------------|---------|
-| 90-100 | Clear resolution, both intents preserved |
-| 70-89 | Good resolution, minor uncertainty |
-| 50-69 | Reasonable resolution, needs human verification |
-| Below 50 | Uncertain - recommend manual resolution |
+| Confidence | Meaning                                         |
+| ---------- | ----------------------------------------------- |
+| 90-100     | Clear resolution, both intents preserved        |
+| 70-89      | Good resolution, minor uncertainty              |
+| 50-69      | Reasonable resolution, needs human verification |
+| Below 50   | Uncertain - recommend manual resolution         |
 
 ### What Affects Confidence
 
 **Increases:**
+
 - Clear separation of concerns between sides
 - Additive conflict (easy to combine)
 - Good understanding of both intents
 
 **Decreases:**
+
 - Complex interleaved logic
 - Unclear what either side intended
 - Structural conflicts with different patterns
@@ -232,6 +235,7 @@ If multiple files conflict, analyse each separately:
 ## Example Analysis
 
 **Conflict:**
+
 ```
 <<<<<<< HEAD
 export async function getUser(id: string) {
@@ -247,6 +251,7 @@ export async function getUser(id: string) {
 ```
 
 **Analysis:**
+
 ```json
 {
   "conflict_type": "modificative",

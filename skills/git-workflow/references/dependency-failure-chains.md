@@ -124,7 +124,7 @@ Task 1 failed: "Cannot create schema - database connection refused"
 Instructions:
 1. Execution paused
 2. Fix the issue manually (e.g., start database)
-3. Run: /execute --resume --retry task-1
+3. Run: claudikins-kernel:execute --resume --retry task-1
 ```
 
 **Use when:** The failure is environmental, not code-related.
@@ -172,7 +172,7 @@ This will:
 - Save current state to checkpoint
 - Keep successful branches intact
 - Exit execution cleanly
-- Can resume later with /execute --resume
+- Can resume later with claudikins-kernel:execute --resume
 ```
 
 **Use when:** The batch is fundamentally broken and needs replanning.
@@ -225,7 +225,7 @@ In execute-state.json:
 When resuming after cascade failure:
 
 ```bash
-/execute --resume
+claudikins-kernel:execute --resume
 
 Detected previous failure cascade:
 - task-1: failed (schema validation)

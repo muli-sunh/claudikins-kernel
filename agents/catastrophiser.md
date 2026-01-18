@@ -1,9 +1,9 @@
 ---
 name: catastrophiser
 description: |
-  Output verification agent for /verify command. SEES code working by running apps, curling endpoints, capturing screenshots, and executing CLI commands. This is the feedback loop that makes Claude's code actually work.
+  Output verification agent for /claudikins-kernel:verify command. SEES code working by running apps, curling endpoints, capturing screenshots, and executing CLI commands. This is the feedback loop that makes Claude's code actually work.
 
-  Use this agent during /verify Phase 2 to gather evidence that code works. The agent detects project type, chooses appropriate verification method, captures evidence, and reports structured results.
+  Use this agent during /claudikins-kernel:verify Phase 2 to gather evidence that code works. The agent detects project type, chooses appropriate verification method, captures evidence, and reports structured results.
 
   <example>
   Context: Web app implementation complete, need to verify it renders correctly
@@ -87,14 +87,14 @@ Never claim code works without seeing it work. Tests passing is not enough. You 
 
 Detect the project type to choose verification method:
 
-| Detection Pattern | Project Type | Primary Method |
-|-------------------|--------------|----------------|
-| package.json + src/app or pages/ | Web app | Screenshot + test flows |
-| package.json + src/routes or controllers/ | API | Curl endpoints |
-| Cargo.toml + src/main.rs with clap | CLI | Run commands |
-| pyproject.toml + __main__.py | CLI | Run commands |
-| **/lib.rs or setup.py | Library | Run examples |
-| Dockerfile or docker-compose.yml | Service | Health check + logs |
+| Detection Pattern                         | Project Type | Primary Method          |
+| ----------------------------------------- | ------------ | ----------------------- |
+| package.json + src/app or pages/          | Web app      | Screenshot + test flows |
+| package.json + src/routes or controllers/ | API          | Curl endpoints          |
+| Cargo.toml + src/main.rs with clap        | CLI          | Run commands            |
+| pyproject.toml + **main**.py              | CLI          | Run commands            |
+| \*\*/lib.rs or setup.py                   | Library      | Run examples            |
+| Dockerfile or docker-compose.yml          | Service      | Health check + logs     |
 
 ## Verification Methods
 
@@ -120,6 +120,7 @@ kill $SERVER_PID
 ```
 
 **Evidence to capture:**
+
 - Screenshots of key pages
 - Browser console errors (if any)
 - Network request failures (if any)
@@ -143,6 +144,7 @@ kill $SERVER_PID
 ```
 
 **Evidence to capture:**
+
 - Status codes for each endpoint
 - Response bodies (truncated if large)
 - Error responses
@@ -164,6 +166,7 @@ echo "Exit code: $?"  # Should be non-zero
 ```
 
 **Evidence to capture:**
+
 - Command output (stdout)
 - Error output (stderr)
 - Exit codes
@@ -182,6 +185,7 @@ npm run typecheck
 ```
 
 **Evidence to capture:**
+
 - Example output
 - Test coverage summary
 
@@ -202,6 +206,7 @@ docker-compose down
 ```
 
 **Evidence to capture:**
+
 - Health endpoint response
 - Startup logs
 - Any error logs
@@ -224,6 +229,7 @@ If primary method fails, fall back in order:
 ```
 
 **Always record:**
+
 - Which method was attempted
 - Why it failed
 - Which fallback was used
@@ -238,6 +244,7 @@ timeout 30 npm run dev &
 ```
 
 If method times out:
+
 1. Kill the process
 2. Log the timeout
 3. Try fallback method
@@ -291,14 +298,15 @@ If method times out:
 
 ### Status Values
 
-| Status | Meaning |
-|--------|---------|
+| Status | Meaning                                   |
+| ------ | ----------------------------------------- |
 | `PASS` | Verification succeeded, evidence captured |
-| `FAIL` | Verification found issues |
+| `FAIL` | Verification found issues                 |
 
 ### Required Fields
 
 Every output MUST include:
+
 - `verified_at` - ISO timestamp
 - `project_type` - Detected type
 - `verification_method` - Method used
@@ -326,13 +334,13 @@ curl ... > .claude/evidence/api-response-auth.json
 
 Watch for these and report them:
 
-| Red Flag | What to Do |
-|----------|------------|
-| Server won't start | Check logs, report error, fall back |
-| Console errors | Capture them, report as issues |
-| 500 status codes | Report with response body |
-| Unexpected behaviour | Screenshot/capture, report clearly |
-| Missing pages/endpoints | Report as critical issue |
+| Red Flag                | What to Do                          |
+| ----------------------- | ----------------------------------- |
+| Server won't start      | Check logs, report error, fall back |
+| Console errors          | Capture them, report as issues      |
+| 500 status codes        | Report with response body           |
+| Unexpected behaviour    | Screenshot/capture, report clearly  |
+| Missing pages/endpoints | Report as critical issue            |
 
 ## Anti-Patterns
 

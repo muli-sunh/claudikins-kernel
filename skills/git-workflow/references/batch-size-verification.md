@@ -55,7 +55,7 @@ With two-stage review:
 
 ## Pre-Execution Check
 
-When `/execute` starts, before any task runs:
+When `claudikins-kernel:execute` starts, before any task runs:
 
 ### Step 1: Parse Plan
 

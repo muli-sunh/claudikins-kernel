@@ -133,7 +133,7 @@ npx api-extractor run --local
 diff api-report/project.api.md api-report/project.api.md.old
 ```
 
-## Detection in /ship
+## Detection in claudikins-kernel:ship
 
 ```
 Scanning for breaking changes...

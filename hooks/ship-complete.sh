@@ -15,7 +15,7 @@ SHIP_STATE="$CLAUDE_DIR/ship-state.json"
 
 if [ ! -f "$SHIP_STATE" ]; then
   echo "ERROR: ship-state.json not found" >&2
-  echo "The /ship session may not have initialized properly." >&2
+  echo "The claudikins-kernel:ship session may not have initialized properly." >&2
   exit 2
 fi
 
@@ -44,7 +44,7 @@ if [ ${#INCOMPLETE[@]} -gt 0 ]; then
     echo "  - $phase" >&2
   done
   echo "" >&2
-  echo "Continue the /ship workflow to complete remaining phases." >&2
+  echo "Continue the claudikins-kernel:ship workflow to complete remaining phases." >&2
 
   # Not exit 2 - this is informational, not a gate block
   # The ship is in progress, not failed
@@ -59,7 +59,7 @@ UNLOCK_MERGE=$(jq -r '.unlock_merge // false' "$SHIP_STATE")
 
 if [ "$UNLOCK_MERGE" != "true" ]; then
   echo "WARNING: Merge not yet approved by human" >&2
-  echo "Human must approve final merge before completing /ship." >&2
+  echo "Human must approve final merge before completing claudikins-kernel:ship." >&2
   exit 0
 fi
 

@@ -1,6 +1,6 @@
 ---
 name: brain-jam-plan
-description: Use when running /plan, brainstorming implementation approaches, gathering requirements iteratively, structuring complex technical plans, or facing analysis paralysis with too many options — provides iterative human-in-the-loop planning with explicit checkpoints and trade-off presentation
+description: Use when running claudikins-kernel:plan, brainstorming implementation approaches, gathering requirements iteratively, structuring complex technical plans, or facing analysis paralysis with too many options — provides iterative human-in-the-loop planning with explicit checkpoints and trade-off presentation
 ---
 
 # Brain-Jam Planning Methodology
@@ -17,7 +17,7 @@ Planning is an iterative conversation, not a production line. The human stays in
 
 Use this skill when:
 
-- Running the `/plan` command
+- Running the `claudikins-kernel:plan` command
 - Requirements are unclear or keep changing
 - Multiple valid approaches exist and you can't choose
 - User wants involvement in decisions (not just receive a plan)
@@ -107,7 +107,7 @@ See [plan-checklist.md](references/plan-checklist.md) for full verification.
 
 ## Output Format
 
-Plans must include machine-readable task markers for `/execute` compatibility:
+Plans must include machine-readable task markers for `claudikins-kernel:execute` compatibility:
 
 ```markdown
 <!-- EXECUTION_TASKS_START -->
@@ -178,7 +178,7 @@ If you're thinking any of these, you're about to violate the methodology:
 
 - [plan-checklist.md](references/plan-checklist.md) — Verification checklist
 - [approach-template.md](references/approach-template.md) — How to present options
-- [plan-format.md](references/plan-format.md) — Output structure for /execute
+- [plan-format.md](references/plan-format.md) — Output structure for claudikins-kernel:execute
 - [iteration-limits.md](references/iteration-limits.md) — When to stop iterating
 - [requirement-stability.md](references/requirement-stability.md) — Scope creep detection
 - [approach-conflict-resolution.md](references/approach-conflict-resolution.md) — Conflicting approaches

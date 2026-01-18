@@ -21,22 +21,22 @@ mkdir -p "$CLAUDE_DIR"
 # ============================================
 
 if [ ! -f "$VERIFY_STATE" ]; then
-  echo "ERROR: /verify has not been run" >&2
+  echo "ERROR: claudikins-kernel:verify has not been run" >&2
   echo "" >&2
-  echo "You must run /verify before /ship." >&2
-  echo "Run: /verify" >&2
+  echo "You must run claudikins-kernel:verify before claudikins-kernel:ship." >&2
+  echo "Run: claudikins-kernel:verify" >&2
   exit 2
 fi
 
 # Check unlock flag
 UNLOCK=$(jq -r '.unlock_ship // false' "$VERIFY_STATE" 2>/dev/null || echo "false")
 if [ "$UNLOCK" != "true" ]; then
-  echo "ERROR: /verify did not pass or was not approved" >&2
+  echo "ERROR: claudikins-kernel:verify did not pass or was not approved" >&2
   echo "" >&2
   DECISION=$(jq -r '.human_checkpoint.decision // "unknown"' "$VERIFY_STATE" 2>/dev/null || echo "unknown")
   echo "Human checkpoint decision: $DECISION" >&2
   echo "" >&2
-  echo "Re-run /verify and ensure human approves." >&2
+  echo "Re-run claudikins-kernel:verify and ensure human approves." >&2
   exit 2
 fi
 
@@ -54,7 +54,7 @@ if [ -n "$VERIFY_COMMIT" ] && [ -n "$CURRENT_COMMIT" ]; then
     echo "Verified commit: $VERIFY_COMMIT" >&2
     echo "Current commit:  $CURRENT_COMMIT" >&2
     echo "" >&2
-    echo "Re-run /verify to validate current code." >&2
+    echo "Re-run claudikins-kernel:verify to validate current code." >&2
     exit 2
   fi
 fi
@@ -75,7 +75,7 @@ if [ -f "$MANIFEST_FILE" ]; then
       echo "Verified manifest: $VERIFIED_MANIFEST" >&2
       echo "Current manifest:  $CURRENT_MANIFEST" >&2
       echo "" >&2
-      echo "Re-run /verify to validate current code." >&2
+      echo "Re-run claudikins-kernel:verify to validate current code." >&2
       exit 2
     fi
   fi

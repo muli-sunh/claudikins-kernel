@@ -1,6 +1,6 @@
 # Force Push Protection (S-23)
 
-Preventing accidental force pushes during /ship.
+Preventing accidental force pushes during claudikins-kernel:ship.
 
 ## The Danger
 
@@ -202,7 +202,7 @@ git push --force origin main
 # Notify team
 ```
 
-## Integration with /ship
+## Integration with claudikins-kernel:ship
 
 ### Check Before Merge
 

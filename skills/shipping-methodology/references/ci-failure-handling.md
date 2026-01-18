@@ -1,6 +1,6 @@
 # CI Failure Handling (S-20)
 
-Handling CI pipeline failures during /ship.
+Handling CI pipeline failures during claudikins-kernel:ship.
 
 ## CI Check Flow
 

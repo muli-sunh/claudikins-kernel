@@ -1,6 +1,6 @@
 # Execution Tracing
 
-Visibility into the execution graph for debugging, performance analysis, and understanding what happened during a /execute session.
+Visibility into the execution graph for debugging, performance analysis, and understanding what happened during a claudikins-kernel:execute session.
 
 ## Why Tracing Matters
 
@@ -71,7 +71,7 @@ Task 1 starts → span_id = "task-1", parent = "batch-1"
 Agent spawns → span_id = "agent-1", parent = "task-1"
 ```
 
-## Trace Structure for /execute
+## Trace Structure for claudikins-kernel:execute
 
 ### Session Level
 
@@ -308,7 +308,7 @@ if [ "$SESSION_COMPLETE" = "true" ]; then
 fi
 ```
 
-## Output: /execute --trace
+## Output: claudikins-kernel:execute --trace
 
 View trace summary:
 

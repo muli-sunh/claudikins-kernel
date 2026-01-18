@@ -40,7 +40,7 @@ fi
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
     echo "ERROR: Not in a git repository. Cannot create task branch." >&2
     echo "" >&2
-    echo "The /execute command requires a git repository to manage task branches." >&2
+    echo "The claudikins-kernel:execute command requires a git repository to manage task branches." >&2
     echo "Run 'git init' first, or navigate to an existing repository." >&2
     exit 2
 fi
@@ -49,7 +49,7 @@ fi
 if ! git diff-index --quiet HEAD -- 2>/dev/null; then
     echo "ERROR: Uncommitted changes detected. Cannot create task branch." >&2
     echo "" >&2
-    echo "Please commit or stash your changes before running /execute:" >&2
+    echo "Please commit or stash your changes before running claudikins-kernel:execute:" >&2
     echo "  git stash        # Temporarily store changes" >&2
     echo "  git commit -am 'WIP'  # Commit changes" >&2
     exit 2

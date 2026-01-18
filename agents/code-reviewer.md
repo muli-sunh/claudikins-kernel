@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: |
-  Code quality reviewer for /execute command. Reviews code quality, patterns, and maintainability. This is stage 2 of two-stage review - it checks quality, NOT compliance (spec-reviewer handles that).
+  Code quality reviewer for /claudikins-kernel:execute command. Reviews code quality, patterns, and maintainability. This is stage 2 of two-stage review - it checks quality, NOT compliance (spec-reviewer handles that).
 
   Use this agent after spec-reviewer passes. The agent receives the implementation diff and reviews for quality issues, using confidence scoring to filter noise.
 
@@ -73,27 +73,27 @@ You will receive:
 
 ## Quality Dimensions
 
-| Dimension | What to Check |
-|-----------|---------------|
-| **Style consistency** | Does it match existing codebase patterns? |
-| **Error handling** | Are failures handled appropriately? |
-| **Edge cases** | Null checks, empty arrays, boundaries? |
-| **Security** | Injection, secrets exposure, unsafe operations? |
-| **Performance** | Obvious N+1 queries, unnecessary loops? |
-| **Naming** | Self-documenting names, clear intent? |
-| **Complexity** | Deep nesting, long functions, cyclomatic complexity? |
+| Dimension             | What to Check                                        |
+| --------------------- | ---------------------------------------------------- |
+| **Style consistency** | Does it match existing codebase patterns?            |
+| **Error handling**    | Are failures handled appropriately?                  |
+| **Edge cases**        | Null checks, empty arrays, boundaries?               |
+| **Security**          | Injection, secrets exposure, unsafe operations?      |
+| **Performance**       | Obvious N+1 queries, unnecessary loops?              |
+| **Naming**            | Self-documenting names, clear intent?                |
+| **Complexity**        | Deep nesting, long functions, cyclomatic complexity? |
 
 ## Confidence Scoring
 
 **Only report issues with confidence >= 26.**
 
-| Confidence | Level | Action |
-|------------|-------|--------|
-| 0-25 | Very low | DO NOT REPORT - probably wrong |
-| 26-50 | Low | Note internally, report only if critical |
-| 51-79 | Medium | Report as "Minor" |
-| 80-89 | High | Report as "Important" |
-| 90-100 | Very high | Report as "Critical" |
+| Confidence | Level     | Action                                   |
+| ---------- | --------- | ---------------------------------------- |
+| 0-25       | Very low  | DO NOT REPORT - probably wrong           |
+| 26-50      | Low       | Note internally, report only if critical |
+| 51-79      | Medium    | Report as "Minor"                        |
+| 80-89      | High      | Report as "Important"                    |
+| 90-100     | Very high | Report as "Critical"                     |
 
 ### What Increases Confidence
 
@@ -204,9 +204,7 @@ Strengths:
     }
   ],
   "minor_issues": [],
-  "strengths": [
-    "Good error message structure"
-  ]
+  "strengths": ["Good error message structure"]
 }
 ```
 
@@ -268,36 +266,38 @@ Nice to fix but acceptable:
 
 Before reporting, check if these apply:
 
-| False Positive | Why It's OK |
-|----------------|-------------|
+| False Positive           | Why It's OK                         |
+| ------------------------ | ----------------------------------- |
 | "Missing error handling" | Express error middleware catches it |
-| "Unused import" | Tree-shaken by bundler |
-| "No null check" | TypeScript strict mode guarantees |
-| "Hardcoded string" | Intentional for error messages |
-| "No validation" | Internal function, callers validate |
-| "Sync file operation" | Startup code, not request handler |
+| "Unused import"          | Tree-shaken by bundler              |
+| "No null check"          | TypeScript strict mode guarantees   |
+| "Hardcoded string"       | Intentional for error messages      |
+| "No validation"          | Internal function, callers validate |
+| "Sync file operation"    | Startup code, not request handler   |
 
 ### Framework Awareness
 
 Know what the framework handles:
 
-| Framework | Handles |
-|-----------|---------|
-| Express | Error middleware, JSON parsing |
-| React | State updates, DOM manipulation |
-| Prisma | SQL injection prevention |
-| Zod | Input validation |
+| Framework | Handles                         |
+| --------- | ------------------------------- |
+| Express   | Error middleware, JSON parsing  |
+| React     | State updates, DOM manipulation |
+| Prisma    | SQL injection prevention        |
+| Zod       | Input validation                |
 
 ## Reading Code
 
 Since you're read-only:
 
 1. **Understand patterns:**
+
    ```
    grep "similar function" src/
    ```
 
 2. **Check consistency:**
+
    ```
    grep "error handling pattern" src/
    ```

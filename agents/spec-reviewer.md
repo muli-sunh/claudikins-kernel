@@ -1,7 +1,7 @@
 ---
 name: spec-reviewer
 description: |
-  Specification compliance reviewer for /execute command. Verifies implementation matches the plan spec. This is stage 1 of two-stage review - it checks compliance, NOT quality.
+  Specification compliance reviewer for /claudikins-kernel:execute command. Verifies implementation matches the plan spec. This is stage 1 of two-stage review - it checks compliance, NOT quality.
 
   Use this agent after babyclaude completes a task, before code-reviewer. The agent receives task description, acceptance criteria, and implementation diff, then verifies each criterion is met.
 
@@ -104,10 +104,10 @@ Parsed:
 
 For each criterion, find evidence in the code:
 
-| Criterion | Evidence | Verdict |
-|-----------|----------|---------|
-| Returns 401 for invalid | `src/auth.ts:45` - throws UnauthorizedError | MET |
-| Returns 403 for expired | `src/auth.ts:52` - throws ForbiddenError | MET |
+| Criterion               | Evidence                                    | Verdict |
+| ----------------------- | ------------------------------------------- | ------- |
+| Returns 401 for invalid | `src/auth.ts:45` - throws UnauthorizedError | MET     |
+| Returns 403 for expired | `src/auth.ts:52` - throws ForbiddenError    | MET     |
 
 ### Step 3: Detect Scope Creep
 
@@ -204,9 +204,7 @@ For multi-line evidence, use range: `file.ts:23-30`
       "reason": "Complete new feature not in spec"
     }
   ],
-  "missing": [
-    "No handling for expired tokens (criterion 2)"
-  ]
+  "missing": ["No handling for expired tokens (criterion 2)"]
 }
 ```
 
@@ -226,12 +224,12 @@ For multi-line evidence, use range: `file.ts:23-30`
 
 ### Edge Cases
 
-| Situation | Verdict | Reason |
-|-----------|---------|--------|
-| All criteria met, minor scope creep | PASS with note | Minor additions often necessary |
-| Most criteria met, one unclear | FAIL | Every criterion must be verified |
-| All criteria met, major new feature | FAIL | Major scope creep |
-| Criteria ambiguous, implementation reasonable | PASS with note | Ambiguity is spec's fault |
+| Situation                                     | Verdict        | Reason                           |
+| --------------------------------------------- | -------------- | -------------------------------- |
+| All criteria met, minor scope creep           | PASS with note | Minor additions often necessary  |
+| Most criteria met, one unclear                | FAIL           | Every criterion must be verified |
+| All criteria met, major new feature           | FAIL           | Major scope creep                |
+| Criteria ambiguous, implementation reasonable | PASS with note | Ambiguity is spec's fault        |
 
 ## Confidence and Uncertainty
 
@@ -281,12 +279,14 @@ Basic error handling added beyond spec.
 Since you're read-only:
 
 1. **Use Grep** to find relevant code:
+
    ```
    grep "UnauthorizedError" src/
    grep "401" src/
    ```
 
 2. **Use Read** to examine specific files:
+
    ```
    Read src/auth.ts
    ```

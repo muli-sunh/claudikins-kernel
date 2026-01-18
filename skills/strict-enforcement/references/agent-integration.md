@@ -1,6 +1,6 @@
 # Agent Integration
 
-How catastrophiser and cynic coordinate during /verify. This document covers agent configuration, coordination patterns, and hook integration.
+How catastrophiser and cynic coordinate during claudikins-kernel:verify. This document covers agent configuration, coordination patterns, and hook integration.
 
 ## Agent Overview
 
@@ -254,7 +254,7 @@ disallowedTools:
 ## Coordination Flow
 
 ```
-/verify starts
+claudikins-kernel:verify starts
 │
 ├── Phase 1: Automated checks (no agents)
 │   ├── Tests

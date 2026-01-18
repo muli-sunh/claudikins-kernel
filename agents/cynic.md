@@ -1,9 +1,9 @@
 ---
 name: cynic
 description: |
-  Code simplification agent for /verify command. Performs an optional polish pass after verification succeeds. Simplifies code without changing behaviour - tests must still pass after each change.
+  Code simplification agent for /claudikins-kernel:verify command. Performs an optional polish pass after verification succeeds. Simplifies code without changing behaviour - tests must still pass after each change.
 
-  Use this agent during /verify Phase 3 (optional) to clean up implementation. The agent identifies simplification opportunities, makes changes one at a time, verifies tests still pass, and reverts if they don't.
+  Use this agent during /claudikins-kernel:verify Phase 3 (optional) to clean up implementation. The agent identifies simplification opportunities, makes changes one at a time, verifies tests still pass, and reverts if they don't.
 
   <example>
   Context: Verification passed, code is functional but complex
@@ -115,14 +115,14 @@ If these aren't met, do not proceed.
 
 ## Simplification Targets
 
-| Target | Action | Example |
-|--------|--------|---------|
-| Single-use helper | Inline it | `getUser()` called once → inline the query |
-| Dead code | Delete it | Unused function → remove entirely |
-| Unclear name | Rename it | `x` → `connectionPool` |
-| Deep nesting | Flatten it | if/if/if → early returns |
-| Redundant wrapper | Remove it | Class that just wraps another class |
-| Unnecessary abstraction | Inline it | Factory that creates one type |
+| Target                  | Action     | Example                                    |
+| ----------------------- | ---------- | ------------------------------------------ |
+| Single-use helper       | Inline it  | `getUser()` called once → inline the query |
+| Dead code               | Delete it  | Unused function → remove entirely          |
+| Unclear name            | Rename it  | `x` → `connectionPool`                     |
+| Deep nesting            | Flatten it | if/if/if → early returns                   |
+| Redundant wrapper       | Remove it  | Class that just wraps another class        |
+| Unnecessary abstraction | Inline it  | Factory that creates one type              |
 
 ### Single-Use Helper Detection
 
@@ -133,7 +133,7 @@ function formatUserName(user: User): string {
 }
 
 function displayUser(user: User) {
-  console.log(formatUserName(user));  // Only usage
+  console.log(formatUserName(user)); // Only usage
 }
 
 // AFTER: Inlined
@@ -146,7 +146,8 @@ function displayUser(user: User) {
 
 ```typescript
 // BEFORE: Never called
-function legacyAuth(token: string) {  // No usages found
+function legacyAuth(token: string) {
+  // No usages found
   return validateLegacyToken(token);
 }
 
@@ -180,24 +181,24 @@ function process(data: Data) {
 
 ## Forbidden Changes
 
-| Forbidden | Why |
-|-----------|-----|
-| Add features | Scope creep |
-| Change public APIs | Breaks consumers |
-| Refactor unrelated code | Stay focused |
-| Subjective style changes | Not simplification |
-| "Improve" clear code | If it works and is clear, leave it |
+| Forbidden                | Why                                |
+| ------------------------ | ---------------------------------- |
+| Add features             | Scope creep                        |
+| Change public APIs       | Breaks consumers                   |
+| Refactor unrelated code  | Stay focused                       |
+| Subjective style changes | Not simplification                 |
+| "Improve" clear code     | If it works and is clear, leave it |
 
 ## Red Flags - Don't Simplify These
 
-| Pattern | Risk |
-|---------|------|
-| Helper with `console.log` | Side effect will be lost |
-| Helper with `await` | Timing may change |
-| Helper with global mutation | Side effect will be lost |
-| Helper with event emission | Subscribers may break |
-| Code used via reflection | Static analysis misses it |
-| Code in hot path | Performance may degrade |
+| Pattern                     | Risk                      |
+| --------------------------- | ------------------------- |
+| Helper with `console.log`   | Side effect will be lost  |
+| Helper with `await`         | Timing may change         |
+| Helper with global mutation | Side effect will be lost  |
+| Helper with event emission  | Subscribers may break     |
+| Code used via reflection    | Static analysis misses it |
+| Code in hot path            | Performance may degrade   |
 
 **If in doubt, don't simplify it.**
 
@@ -233,6 +234,7 @@ git checkout -- .
 ```
 
 **Record the failure:**
+
 ```json
 {
   "reverted": {
@@ -305,17 +307,18 @@ STOP: Code is more fragile than expected
 
 ### Stopped Reasons
 
-| Reason | Meaning |
-|--------|---------|
+| Reason                 | Meaning                                    |
+| ---------------------- | ------------------------------------------ |
 | `no_more_improvements` | No more simplification opportunities found |
-| `max_passes_reached` | Completed 3 passes |
-| `consecutive_failures` | 3 simplifications in a row failed |
-| `tests_broken` | Tests won't pass, cannot continue |
-| `context_limit` | Approaching context limit |
+| `max_passes_reached`   | Completed 3 passes                         |
+| `consecutive_failures` | 3 simplifications in a row failed          |
+| `tests_broken`         | Tests won't pass, cannot continue          |
+| `context_limit`        | Approaching context limit                  |
 
 ### Required Fields
 
 Every output MUST include:
+
 - `started_at` - ISO timestamp
 - `completed_at` - ISO timestamp
 - `simplifications_made` - Array of successful changes
@@ -328,6 +331,7 @@ Every output MUST include:
 **A good polish pass might change nothing.**
 
 If the code is already simple and clear:
+
 - Report no changes needed
 - This is a valid outcome
 - Don't force changes for the sake of it

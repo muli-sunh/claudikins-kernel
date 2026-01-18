@@ -1,6 +1,6 @@
 # Verification Checklist
 
-Complete checklist for /verify phases. Use this to ensure nothing is missed.
+Complete checklist for claudikins-kernel:verify phases. Use this to ensure nothing is missed.
 
 ## Pre-Verification Gate
 
@@ -24,8 +24,8 @@ Before verification can begin, validate the execution state.
 
 | Check | How | Fail Action |
 |-------|-----|-------------|
-| Execute state exists | `[ -f .claude/execute-state.json ]` | Exit 2: "Run /execute first" |
-| Execute completed | `jq -r '.status' == "completed"` | Exit 2: "/execute incomplete" |
+| Execute state exists | `[ -f .claude/execute-state.json ]` | Exit 2: "Run claudikins-kernel:execute first" |
+| Execute completed | `jq -r '.status' == "completed"` | Exit 2: "claudikins-kernel:execute incomplete" |
 | On task branch | `git branch --show-current` | Warning: verify from correct branch |
 | Clean working tree | `git status --porcelain` | Warning: uncommitted changes |
 
@@ -386,7 +386,7 @@ find . \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' \
   | sort | xargs sha256sum > .claude/verify-manifest.txt
 ```
 
-This allows /ship to detect post-verification modifications.
+This allows claudikins-kernel:ship to detect post-verification modifications.
 
 ### Final State
 

@@ -41,7 +41,7 @@ if [ ! -f "$VERIFY_STATE" ]; then
     cat <<EOF >&2
 Verification not started.
 
-Run /verify to start verification process.
+Run claudikins-kernel:verify to start verification process.
 EOF
     exit 2
 fi
@@ -174,7 +174,7 @@ cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "Stop",
-    "additionalContext": "VERIFICATION COMPLETE\\n\\nSession: ${SESSION_ID}\\nCommit: ${COMMIT_SHA}\\nFiles verified: ${FILE_COUNT}\\nManifest: ${MANIFEST_SHA}\\n\\nShip unlocked. Run /ship when ready."
+    "additionalContext": "VERIFICATION COMPLETE\\n\\nSession: ${SESSION_ID}\\nCommit: ${COMMIT_SHA}\\nFiles verified: ${FILE_COUNT}\\nManifest: ${MANIFEST_SHA}\\n\\nShip unlocked. Run claudikins-kernel:ship when ready."
   }
 }
 EOF

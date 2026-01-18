@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Use when running /execute, decomposing plans into tasks, setting up two-stage review, deciding batch sizes, or handling stuck agents — enforces isolation, verification, and human checkpoints; prevents runaway parallelization and context death
+description: Use when running claudikins-kernel:execute, decomposing plans into tasks, setting up two-stage review, deciding batch sizes, or handling stuck agents — enforces isolation, verification, and human checkpoints; prevents runaway parallelization and context death
 ---
 
 # Git Workflow Methodology
@@ -9,7 +9,7 @@ description: Use when running /execute, decomposing plans into tasks, setting up
 
 Use this skill when you need to:
 
-- Run the `/execute` command
+- Run the `claudikins-kernel:execute` command
 - Decompose plans into executable tasks
 - Set up two-stage code review
 - Decide batch sizes and checkpoints

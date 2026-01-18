@@ -42,7 +42,7 @@ skills:
   - git-workflow
 ---
 
-# /execute Command
+# claudikins-kernel:execute Command
 
 You are orchestrating a task execution workflow with isolated agents and human checkpoints between batches.
 
@@ -77,7 +77,7 @@ State file: `.claude/execute-state.json`
 ```json
 {
   "session_id": "exec-YYYY-MM-DD-HHMM",
-  "plan_source": "path/to/plan.md",
+  "plan_source": "path/toclaudikins-kernel:plan.md",
   "started_at": "ISO timestamp",
   "status": "initialising|executing|paused|completed|aborted",
   "current_batch": 1,
@@ -118,7 +118,7 @@ The plan must include:
   ...
   <!-- EXECUTION_TASKS_END -->
 
-Run /plan to generate a properly formatted plan.
+Run claudikins-kernel:plan to generate a properly formatted plan.
 ```
 
 ### Dependency Graph
@@ -409,7 +409,7 @@ Summary:
 Branches merged: ${merged_branches}
 Branches remaining: ${remaining_branches}
 
-Next: /verify to validate the implementation
+Next: claudikins-kernel:verify to validate the implementation
 ```
 
 ## Emergency Handling
@@ -502,7 +502,7 @@ Checkpoints are saved to `.claude/checkpoints/checkpoint-{timestamp}.json`:
     "spans": [...],
     "tool_calls": [...]
   },
-  "recovery_instructions": "Run /execute --resume to continue from this checkpoint"
+  "recovery_instructions": "Run claudikins-kernel:execute --resume to continue from this checkpoint"
 }
 ```
 
