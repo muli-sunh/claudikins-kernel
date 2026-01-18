@@ -8,6 +8,21 @@
 
 A structured workflow plugin for Claude Code that enforces quality through human checkpoints, isolated agents, and verification gates.
 
+---
+
+## Quick Start
+
+```bash
+# Add the Claudikins marketplace
+/marketplace add elb-pr/claudikins-marketplace
+
+# Install the plugin
+/plugin install claudikins-kernel
+```
+
+Restart Claude Code. Done.
+
+
 ## The Big Picture
 
 You have 4 commands that flow in sequence: `/plan` → `/execute` → `/verify` → `/ship`
