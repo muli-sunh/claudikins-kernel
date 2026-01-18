@@ -72,7 +72,7 @@ if [ -f "$PLAN_STATE" ]; then
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "Existing plan session found: ${SESSION_ID} (status: ${STATUS}, phase: ${PHASE}, age: ${AGE_HOURS}h). Use --session-id to resume or start fresh with claudikins-kernel:plans."
+    "additionalContext": "Existing plan session found: ${SESSION_ID} (status: ${STATUS}, phase: ${PHASE}, age: ${AGE_HOURS}h). Use --session-id to resume or start fresh with claudikins-kernel:outline."
   }
 }
 EOF
@@ -82,7 +82,7 @@ else
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "claudikins-kernel directories initialised. Ready for claudikins-kernel:plans command."
+    "additionalContext": "claudikins-kernel directories initialised. Ready for claudikins-kernel:outline command."
   }
 }
 EOF

@@ -87,7 +87,7 @@ Archived (recoverable for 7 days):
 - Research findings (3 files)
 - Partial draft (2 sections)
 
-To recover: claudikins-kernel:plans --session-id plan-2026-01-16-1430
+To recover: claudikins-kernel:outline --session-id plan-2026-01-16-1430
 ```
 
 ## Recovery Option
@@ -95,7 +95,7 @@ To recover: claudikins-kernel:plans --session-id plan-2026-01-16-1430
 Abandoned plans can be resumed within 7 days:
 
 ```bash
-claudikins-kernel:plans --session-id plan-2026-01-16-1430
+claudikins-kernel:outline --session-id plan-2026-01-16-1430
 ```
 
 Recovery flow:

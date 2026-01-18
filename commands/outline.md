@@ -1,5 +1,5 @@
 ---
-name: plans
+name: outline
 description: Iterative planning with human checkpoints at every phase
 argument-hint: [brief description of what to plan]
 model: opus
@@ -32,7 +32,7 @@ skills:
   - brain-jam-plan
 ---
 
-# claudikins-kernel:plans Command
+# claudikins-kernel:outline Command
 
 You are orchestrating an iterative planning workflow with human checkpoints at every phase.
 

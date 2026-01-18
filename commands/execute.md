@@ -120,7 +120,7 @@ The plan must include:
   ...
   <!-- EXECUTION_TASKS_END -->
 
-Run claudikins-kernel:plans to generate a properly formatted plan.
+Run claudikins-kernel:outline to generate a properly formatted plan.
 ```
 
 ### Dependency Graph

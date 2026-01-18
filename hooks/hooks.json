@@ -1,5 +1,5 @@
 {
-  "description": "Hooks for claudikins-kernel /plan, /execute, /verify, and /ship command workflows",
+  "description": "Hooks for claudikins-kernel /outline, /execute, /verify, and /ship command workflows",
   "hooks": {
     "SessionStart": [
       {
@@ -175,7 +175,7 @@
         ]
       },
       {
-        "matcher": "claudikins-kernel:plans",
+        "matcher": "claudikins-kernel:outline",
         "hooks": [
           {
             "type": "command",

@@ -48,7 +48,7 @@ When `preserve-state.sh` fires, it captures:
 
 ### Step 1: Detect Previous Session
 
-On `claudikins-kernel:plans` invocation, check for existing state:
+On `claudikins-kernel:outline` invocation, check for existing state:
 
 ```bash
 STATE_FILE=".claude/plan-state.json"

@@ -39,13 +39,13 @@ Restart Claude Code. Done.
 
 ## The Big Picture
 
-You have 4 commands that flow in sequence: `claudikins-kernel:plans` → `claudikins-kernel:execute` → `claudikins-kernel:verify` → `claudikins-kernel:ship`
+You have 4 commands that flow in sequence: `claudikins-kernel:outline` → `claudikins-kernel:execute` → `claudikins-kernel:verify` → `claudikins-kernel:ship`
 
 Each command has gates that prevent you skipping steps. You can't execute without a plan, can't verify without executed code, can't ship without verification passing. The system enforces this.
 
 ---
 
-## claudikins-kernel:plans - "Let's figure out what we're building"
+## claudikins-kernel:outline - "Let's figure out what we're building"
 
 **Purpose:** Iterative brainstorming with Claude until you have a solid plan.
 
@@ -182,7 +182,7 @@ Each command has gates that prevent you skipping steps. You can't execute withou
 
 | Agent              | Model | Purpose                   | Used In                   |
 | ------------------ | ----- | ------------------------- | ------------------------- |
-| taxonomy-extremist | Opus  | Read-only research        | claudikins-kernel:plans   |
+| taxonomy-extremist | Opus  | Read-only research        | claudikins-kernel:outline |
 | babyclaude         | Opus  | Implement single task     | claudikins-kernel:execute |
 | spec-reviewer      | Opus  | Did it match the spec?    | claudikins-kernel:execute |
 | code-reviewer      | Opus  | Is the code good?         | claudikins-kernel:execute |

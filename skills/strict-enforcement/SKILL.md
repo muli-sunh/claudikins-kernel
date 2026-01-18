@@ -208,7 +208,7 @@ if [ ! -f "$EXECUTE_STATE" ]; then
 fi
 ```
 
-This enforces the claudikins-kernel:plans → claudikins-kernel:execute → claudikins-kernel:verify → claudikins-kernel:ship flow.
+This enforces the claudikins-kernel:outline → claudikins-kernel:execute → claudikins-kernel:verify → claudikins-kernel:ship flow.
 
 ## Agent Integration
 

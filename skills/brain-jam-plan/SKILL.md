@@ -1,6 +1,6 @@
 ---
 name: brain-jam-plan
-description: Use when running claudikins-kernel:plans, brainstorming implementation approaches, gathering requirements iteratively, structuring complex technical plans, or facing analysis paralysis with too many options — provides iterative human-in-the-loop planning with explicit checkpoints and trade-off presentation
+description: Use when running claudikins-kernel:outline, brainstorming implementation approaches, gathering requirements iteratively, structuring complex technical plans, or facing analysis paralysis with too many options — provides iterative human-in-the-loop planning with explicit checkpoints and trade-off presentation
 ---
 
 # Brain-Jam Planning Methodology
@@ -17,7 +17,7 @@ Planning is an iterative conversation, not a production line. The human stays in
 
 Use this skill when:
 
-- Running the `claudikins-kernel:plans` command
+- Running the `claudikins-kernel:outline` command
 - Requirements are unclear or keep changing
 - Multiple valid approaches exist and you can't choose
 - User wants involvement in decisions (not just receive a plan)
