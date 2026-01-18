@@ -20,9 +20,6 @@ agent_outputs:
   - agent: taxonomy-extremist
     capture_to: .claude/agent-outputs/research/
     merge_strategy: jq -s 'add'
-  - agent: klaus
-    capture_to: .claude/agent-outputs/review/
-    merge_strategy: none
 allowed-tools:
   - Read
   - Grep
