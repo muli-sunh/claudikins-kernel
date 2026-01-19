@@ -24,8 +24,6 @@
 
 **You asked Claude if you should drink that coffee you forgot about, now you're sick. Maybe that one was just me, but the point stands!**
 
-Sound familiar?
-
 claudikins-kernel applies SRE discipline to AI workflows. It enforces a strict 4-stage pipeline with **gates between each step**. You literally cannot skip verification. You cannot ship without the Cynic's approval.
 
 > **Constraint is freedom.** By preventing shortcuts, you get code that actually works.
