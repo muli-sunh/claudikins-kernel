@@ -2,17 +2,63 @@
   <img src="assets/banner.png" alt="Claudikins Kernel - Plan, Execute, Verify, Ship">
 </p>
 
-[View the marketplace](https://github.com/elb-pr/claudikins-marketplace)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/anthropics/claude-code"><img src="https://img.shields.io/badge/Claude_Code-Plugin-blueviolet.svg" alt="Claude Code Plugin"></a>
+  <img src="https://img.shields.io/badge/workflow-SRE_enforced-green.svg" alt="Workflow: SRE Enforced">
+</p>
 
-# Claudikins Kernel
+<h1 align="center">claudikins-kernel</h1>
 
-A structured workflow plugin for Claude Code that enforces quality through human checkpoints, isolated agents, and verification gates.
+<p align="center"><strong>Industrial-grade guardrails for Claude Code.</strong></p>
+
+<p align="center"><em>A disciplined workflow engine run by a team of neurotic AI agents.<br>Don't ship until the Cynic says it's clean.</em></p>
+
+---
+
+## Why?
+
+AI agents are powerful. They're also prone to:
+
+- Hallucinating features you didn't ask for
+- Skipping verification because "the code looks right"
+- Shipping untested changes to main
+- Refactoring half your codebase when you asked for a bug fix
+
+**You asked for a bug fix. It refactored half your codebase.**
+
+Sound familiar?
+
+claudikins-kernel applies SRE discipline to AI workflows. It enforces a strict 4-stage pipeline with **gates between each step**. You literally cannot skip verification. You cannot ship without the Cynic's approval.
+
+> **Constraint is freedom.** By preventing shortcuts, you get code that actually works.
+
+---
+
+## The Workflow
+
+```
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│ /outline │────▶│ /execute │────▶│ /verify  │────▶│  /ship   │
+└──────────┘     └──────────┘     └──────────┘     └──────────┘
+      │                │                │                │
+      ▼                ▼                ▼                ▼
+  taxonomy-        babyclaude      catastrophiser   git-perfectionist
+  extremist        spec-reviewer       cynic
+                   code-reviewer
+```
+
+**Each arrow is a gate.** Try to `/ship` without `/verify` passing? Blocked. Try to `/execute` without a plan? Blocked. The system enforces this - not guidelines, guardrails.
 
 ---
 
 ## Quick Start
 
 ```bash
+# Prerequisites: jq (JSON processor)
+# Ubuntu/Debian: sudo apt install jq
+# macOS: brew install jq
+
 # Add the Claudikins marketplace
 /marketplace add elb-pr/claudikins-marketplace
 
@@ -20,209 +66,106 @@ A structured workflow plugin for Claude Code that enforces quality through human
 /plugin install claudikins-kernel
 ```
 
-### System Requirements
+Restart Claude Code. Then:
 
-- `jq` - Command-line JSON processor (used by hook scripts)
-
-  ```bash
-  # Ubuntu/Debian
-  sudo apt install jq
-
-  # macOS
-  brew install jq
-
-  # Windows (via scoop)
-  scoop install jq
-  ```
-
-Restart Claude Code. Done.
-
-## The Big Picture
-
-You have 4 commands that flow in sequence: `claudikins-kernel:outline` → `claudikins-kernel:execute` → `claudikins-kernel:verify` → `claudikins-kernel:ship`
-
-Each command has gates that prevent you skipping steps. You can't execute without a plan, can't verify without executed code, can't ship without verification passing. The system enforces this.
+```bash
+# Start your first disciplined session
+/outline "Add user authentication to the app"
+```
 
 ---
 
-## claudikins-kernel:outline - "Let's figure out what we're building"
+## Meet the Team
 
-**Purpose:** Iterative brainstorming with Claude until you have a solid plan.
+These aren't generic "agents". They're your synthetic staff - each with a job and a personality.
 
-**How it works:**
-
-1. **Session starts** - Creates a session ID, checks if you have an old session to resume (warns if it's stale - over 4 hours old)
-
-2. **Brain-jam phase** - You and Claude go back and forth. You describe what you want, Claude asks clarifying questions one at a time. Uses AskUserQuestion so you pick from options rather than typing essays. This continues until requirements are clear.
-
-3. **Research phase** - Claude spawns 2-3 "taxonomy-extremist" agents in parallel. These are read-only researchers that dig through your codebase, external docs, or the web depending on what's needed. They return findings, Claude merges them, shows you what was found.
-
-4. **Approaches phase** - Claude presents 2-3 different ways to solve the problem. Each has pros, cons, effort estimate. Claude recommends one. You pick.
-
-5. **Draft phase** - Claude writes the plan section by section. After each section, you approve or request changes. Not batched - one section at a time.
-
-6. **Review phase** - Optionally Klaus (the opinionated debugger) or a plan-reviewer looks at the whole thing and pokes holes.
-
-**Output:** A plan.md file with a task table that claudikins-kernel:execute can parse. The table has task numbers, descriptions, file lists, dependencies, and batch assignments.
-
-**Key agent:** taxonomy-extremist (Sonnet, read-only, runs in parallel)
+| Agent                  | Role           | Personality                                                                                                                                         |
+| ---------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **taxonomy-extremist** | Researcher     | The librarian. Categorises everything. Reads your codebase, external docs, the web - returns structured findings.                                   |
+| **babyclaude**         | Implementer    | The eager junior. Does exactly what you specify. One task, one branch, fresh context. No scope creep.                                               |
+| **spec-reviewer**      | Compliance     | The auditor. Did you do what you said you'd do? Mechanical check against acceptance criteria.                                                       |
+| **code-reviewer**      | Quality        | The critic. Is it actually any good? Error handling? Edge cases? Naming?                                                                            |
+| **catastrophiser**     | Verification   | The QA lead who assumes everything will break. Runs your code, takes screenshots, curls your endpoints. Sees it working, doesn't trust tests alone. |
+| **cynic**              | Simplification | The senior engineer who hates complexity. If it can be done in 5 lines, won't let you use 10.                                                       |
+| **conflict-resolver**  | Merge Handler  | The diplomat. When branches collide, proposes resolutions.                                                                                          |
+| **git-perfectionist**  | Documentation  | The pedant. README not updated? Changelog wrong? Blocked until it's right.                                                                          |
 
 ---
 
-## claudikins-kernel:execute - "Let's build it"
+## The Four Commands
 
-**Purpose:** Execute the plan task by task with fresh agents and code review.
+### `/outline` - "Let's figure out what we're building"
 
-**How it works:**
+Iterative brainstorming until you have a solid plan.
 
-1. **Load & validate** - Parses your plan.md, extracts the task table, builds a dependency graph, figures out which tasks can run in parallel (same batch) vs which must wait (dependencies).
+1. **Brain-jam** - Back and forth with Claude. Pick from options, don't type essays.
+2. **Research** - taxonomy-extremist agents dig through your codebase in parallel.
+3. **Approaches** - 2-3 ways to solve it. Pros, cons, recommendation. You pick.
+4. **Draft** - Plan written section by section. You approve each one.
 
-2. **Per-batch loop:**
-   - **Batch start checkpoint** - Shows you "Batch 1/3: [task-1, task-2]. Ready?" You can execute, skip tasks, reorder, or pause.
-
-   - **Execute tasks** - For each task, creates a git branch (`execute/task-1-auth-middleware`), spawns a fresh "babyclaude" agent. Babyclaude gets the task description, acceptance criteria, and nothing else. It implements exactly what's asked, runs tests, commits, and outputs a JSON report.
-
-   - **Review tasks** - Two-stage review. First "spec-reviewer" (Haiku, fast) checks: did it do what was asked? Any scope creep? Any missing requirements? If that passes, "code-reviewer" (Opus, thorough) checks: is the code good? Error handling? Edge cases? Clear naming?
-
-   - **Batch review checkpoint** - Shows results table. You can accept, revise specific tasks, retry, or escalate to Klaus.
-
-   - **Merge conflict check** - Before merging, checks if the branch will conflict with main. If so, offers conflict resolution options.
-
-   - **Merge decision** - You decide: merge all, merge some, or keep branches separate.
-
-3. **Context monitoring** - If you hit 75% context usage mid-batch, mandatory stop. Offers handoff to new session.
-
-**Output:** Implemented code on branches (or merged), execute-state.json tracking what was done.
-
-**Key agents:**
-
-- babyclaude (Sonnet, one per task, isolated)
-- spec-reviewer (Haiku, mechanical compliance check)
-- code-reviewer (Opus, quality judgement)
+**Output:** `plan.md` with a task table that `/execute` can parse.
 
 ---
 
-## claudikins-kernel:verify - "Does it actually work?"
+### `/execute` - "Let's build it"
 
-**Purpose:** Claude must SEE the code working, not just trust that tests pass.
+Execute the plan task by task with fresh agents and code review.
 
-**How it works:**
+1. **Batch checkpoint** - "Batch 1/3: [task-1, task-2]. Ready?" You decide.
+2. **Per task** - Creates branch, spawns fresh babyclaude, implements, commits.
+3. **Two-stage review** - spec-reviewer checks compliance, code-reviewer checks quality.
+4. **Merge decision** - You choose: merge all, merge some, or keep branches.
 
-1. **Gate check** - Won't run unless claudikins-kernel:execute completed. Checks execute-state.json exists.
-
-2. **Automated quality checks:**
-   - **Tests** - Runs your test suite. If tests fail, tries again to detect flaky tests. If still fails, you decide: fix, skip, or abort.
-   - **Lint** - Runs linter. Can auto-fix if you want.
-   - **Type check** - Runs type checker.
-
-3. **Output verification (catastrophiser)** - This is the key bit. Spawns "catastrophiser" agent (Opus, background) that actually runs your code and observes it:
-   - **Web app:** Starts dev server, takes screenshots, tests user flows
-   - **API:** Curls endpoints, checks responses
-   - **CLI:** Runs commands, verifies output
-   - **Library:** Runs examples
-
-   Has fallbacks - if can't start server, falls back to tests only, then CLI, then code review.
-
-4. **Code simplification (cynic)** - Optional polish pass. "cynic" agent looks for unnecessary complexity, dead code, unclear naming. Makes changes one at a time, runs tests after each. If tests break, reverts.
-
-5. **Klaus escalation** - If stuck, can escalate to Klaus. If Klaus unavailable, falls back to human review.
-
-6. **Human checkpoint** - Shows comprehensive report. You decide: ready to ship, needs work, or accept with caveats.
-
-**Output:** verify-state.json with `unlock_ship: true` if approved. Also generates a file manifest (SHA256 hashes of all source files) so claudikins-kernel:ship can detect if code changed after verification.
-
-**Key agents:**
-
-- catastrophiser (Opus, sees code running, captures evidence)
-- cynic (Opus, optional polish pass)
+**Key feature:** Each babyclaude gets fresh context. No pollution between tasks.
 
 ---
 
-## claudikins-kernel:ship - "Send it"
+### `/verify` - "Does it actually work?"
 
-**Purpose:** Merge to main with proper docs, commit messages, and PR.
+Claude must **see** the code working. Not trust. Verify.
 
-**How it works:**
+1. **Automated checks** - Tests, lint, type check.
+2. **Output verification** - catastrophiser runs your code:
+   - Web app? Starts server, takes screenshots.
+   - API? Curls endpoints, checks responses.
+   - CLI? Runs commands, verifies output.
+3. **Polish pass** - cynic looks for unnecessary complexity. Changes one thing at a time, tests after each.
+4. **Human checkpoint** - Comprehensive report. You decide: ready to ship?
 
-1. **Gate check** - Won't run unless claudikins-kernel:verify passed AND code hasn't changed since. Checks commit hash and file manifest match.
+**Output:** `verify-state.json` with `unlock_ship: true` if approved. Plus file hashes so `/ship` can detect tampering.
 
-2. **Pre-ship review** - Shows summary of what's being shipped, which branches will merge, verification evidence. You confirm ready.
+---
 
-3. **Commit strategy** - Asks: squash or preserve history? Drafts commit message(s). Section-by-section approval of the message.
+### `/ship` - "Send it"
 
-4. **Documentation (git-perfectionist)** - Spawns "git-perfectionist" agent (Opus) that uses the GRFP methodology from the github-readme plugin. Updates README if features changed, adds CHANGELOG entry, bumps version number. All section-by-section with your approval.
+Merge to main with proper docs and PR.
 
-5. **PR creation** - Drafts PR title and body. Section-by-section approval. Creates PR via `gh` CLI. Has retry logic with exponential backoff if GitHub is flaky.
+1. **Gate check** - Won't run unless verify passed AND code hasn't changed.
+2. **Commit strategy** - Squash or preserve? Message drafted, you approve.
+3. **Documentation** - git-perfectionist updates README, CHANGELOG, version. Section by section.
+4. **PR creation** - Draft, approve, create via `gh` CLI.
+5. **Merge** - Wait for CI if you want. Merge. Cleanup branches.
 
-6. **Final merge** - Waits for CI if you want. Merges when approved. Cleans up feature branches.
-
-**Output:** Code on main, PR merged, branches deleted, version bumped.
-
-**Key agent:** git-perfectionist (Opus, docs updates using GRFP)
+**Output:** Code on main. PR merged. Done properly.
 
 ---
 
 ## The Safety Net
 
-**Cross-command gates:** Each command checks the previous one completed. Can't skip steps.
-
-**State files:** Each command writes state to `.claude/` - plan-state.json, execute-state.json, verify-state.json, ship-state.json. Enables resume if context dies.
-
-**File locking:** All state writes use flock to prevent race conditions if you somehow have parallel sessions.
-
-**Code integrity:** claudikins-kernel:verify generates file hashes, claudikins-kernel:ship validates they haven't changed. Can't ship code that wasn't verified.
-
-**Session management:** Session IDs track everything. If you resume a stale session (4+ hours), warns you research might be outdated.
-
-**Human checkpoints:** Every phase has explicit stop points where you choose what happens next. Nothing auto-proceeds without your approval.
+| Protection              | What it does                                                    |
+| ----------------------- | --------------------------------------------------------------- |
+| **Cross-command gates** | Can't skip steps. Execute needs plan. Ship needs verify.        |
+| **State files**         | Each command writes to `.claude/`. Resume if context dies.      |
+| **File locking**        | flock prevents race conditions on state writes.                 |
+| **Code integrity**      | SHA256 hashes ensure shipped code = verified code.              |
+| **Session management**  | Stale session (4+ hours)? Warns you research might be outdated. |
+| **Human checkpoints**   | Nothing auto-proceeds. You approve every phase.                 |
 
 ---
 
-## Agents
+## Architecture
 
-| Agent              | Model | Purpose                   | Used In                   |
-| ------------------ | ----- | ------------------------- | ------------------------- |
-| taxonomy-extremist | Opus  | Read-only research        | claudikins-kernel:outline |
-| babyclaude         | Opus  | Implement single task     | claudikins-kernel:execute |
-| spec-reviewer      | Opus  | Did it match the spec?    | claudikins-kernel:execute |
-| code-reviewer      | Opus  | Is the code good?         | claudikins-kernel:execute |
-| catastrophiser     | Opus  | See code actually working | claudikins-kernel:verify  |
-| cynic              | Opus  | Polish and simplify       | claudikins-kernel:verify  |
-| git-perfectionist  | Opus  | Update docs for shipping  | claudikins-kernel:ship    |
-
----
-
-## Dependencies
-
-**Recommended plugins:**
-
-- `claudikins-tool-executor` - MCP access for research and verification
-- `claudikins-automatic-context-manager` - Context monitoring at 60%
-
-**Optional plugins:**
-
-- `claudikins-klaus` - Escalation when stuck
-- `claudikins-github-readme` - GRFP methodology for docs
-
----
-
-## Technical Notes
-
-### Hook Behaviour
-
-Plugin hooks **merge and run in parallel** - they don't replace each other. This means:
-
-- claudikins-tool-executor's SessionStart hooks run
-- claudikins-kernel's SessionStart hooks run
-- Both execute simultaneously, neither removes the other
-
-All hooks from all enabled plugins are additive. The only conflict scenario is if multiple hooks try to block the same action - but our hooks don't block, they only set up directories and state.
-
-### Design Philosophy
-
-**Industrial-grade patterns adapted for Claude Code.**
-
-The git-workflow skill draws from distributed systems engineering (microservices, Kubernetes, SRE practices) but adapts these patterns for Claude Code's agent-based execution:
+Industrial-grade patterns adapted for AI workflows.
 
 | Distributed Systems Pattern | Claude Code Adaptation |
 | --------------------------- | ---------------------- |
@@ -233,35 +176,54 @@ The git-workflow skill draws from distributed systems engineering (microservices
 | Deadline propagation        | Task time budgets      |
 | Exponential backoff         | Retry with jitter      |
 
-Same principles, different scale. The goal is reliability through structure - not speed through parallelism.
+Same principles, different scale. Reliability through structure - not speed through parallelism.
 
 ---
 
-## Installation
+## Requirements
 
-### System Requirements
+### System
 
-- `jq` - Command-line JSON processor (used by hook scripts)
+- **jq** - Used by hook scripts for JSON processing
 
-  ```bash
-  # Ubuntu/Debian
-  sudo apt install jq
+```bash
+# Ubuntu/Debian
+sudo apt install jq
 
-  # macOS
-  brew install jq
+# macOS
+brew install jq
 
-  # Windows (via scoop)
-  scoop install jq
-  ```
+# Windows (scoop)
+scoop install jq
+```
+
+### Recommended Plugins
+
+| Plugin                                 | Purpose                                  |
+| -------------------------------------- | ---------------------------------------- |
+| `claudikins-tool-executor`             | MCP access for research and verification |
+| `claudikins-automatic-context-manager` | Context monitoring at 60%                |
+
+### Optional Plugins
+
+| Plugin             | Purpose                     |
+| ------------------ | --------------------------- |
+| `claudikins-klaus` | Escalation when truly stuck |
+
+---
 
 ## Status
 
-Planning complete. Implementation pending.
+**v1.1.2** - Fully functional. Four commands, eight agents, 27 hooks.
 
-See `docs/plans/` for detailed architecture documents.
+[View the marketplace](https://github.com/elb-pr/claudikins-marketplace) | [Changelog](CHANGELOG.md)
 
 ---
 
 ## License
 
 MIT
+
+---
+
+<p align="center"><em>We call it Claudikins because "Draconian-AI-Supervisor" was taken.</em></p>
