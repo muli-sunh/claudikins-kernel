@@ -165,14 +165,16 @@ fi
 
 mv "$TEMP_FILE" "$VERIFY_STATE"
 
-# Output success
-cat <<EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "Stop",
-    "additionalContext": "VERIFICATION COMPLETE\\n\\nSession: ${SESSION_ID}\\nCommit: ${COMMIT_SHA}\\nFiles verified: ${FILE_COUNT}\\nManifest: ${MANIFEST_SHA}\\n\\nShip unlocked. Run claudikins-kernel:ship when ready."
-  }
-}
+# Output success message to stderr (Stop hooks don't support hookSpecificOutput)
+cat <<EOF >&2
+VERIFICATION COMPLETE
+
+Session: ${SESSION_ID}
+Commit: ${COMMIT_SHA}
+Files verified: ${FILE_COUNT}
+Manifest: ${MANIFEST_SHA}
+
+Ship unlocked. Run claudikins-kernel:ship when ready.
 EOF
 
 exit 0

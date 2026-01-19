@@ -9,14 +9,14 @@ set -euo pipefail
 HOOK_INPUT="${CLAUDE_HOOK_INPUT:-}"
 if [[ -z "$HOOK_INPUT" ]]; then
     # No input, allow
-    echo '{"decision": "allow"}'
+    echo '{"decision": "approve"}'
     exit 0
 fi
 
 # Parse the command from input
 COMMAND=$(echo "$HOOK_INPUT" | jq -r '.toolInput.command // empty')
 if [[ -z "$COMMAND" ]]; then
-    echo '{"decision": "allow"}'
+    echo '{"decision": "approve"}'
     exit 0
 fi
 
@@ -42,4 +42,4 @@ fi
 # (This is an example - in practice you might want different behavior)
 
 # Default: allow without modification
-echo '{"decision": "allow"}'
+echo '{"decision": "approve"}'
