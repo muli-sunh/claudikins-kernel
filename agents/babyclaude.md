@@ -33,8 +33,8 @@ description: |
   </example>
 
 model: opus
+permissionMode: acceptEdits
 color: green
-context: fork
 status: stable
 background: false
 skills:
@@ -52,6 +52,12 @@ tools:
   - mcp__plugin_claudikins-tool-executor_tool-executor__execute_code
 disallowedTools:
   - Task
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/task-completion-capture.sh"
+          timeout: 30
 ---
 
 # babyclaude

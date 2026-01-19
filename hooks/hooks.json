@@ -4,6 +4,7 @@
     "SessionStart": [
       {
         "matcher": "*",
+        "once": true,
         "hooks": [
           {
             "type": "command",
@@ -35,6 +36,16 @@
     ],
     "UserPromptSubmit": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/skill-activation-hook.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "claudikins-kernel:execute",
         "hooks": [
           {
@@ -57,12 +68,34 @@
     ],
     "SubagentStart": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/trace-start.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "babyclaude",
         "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/create-task-branch.sh",
             "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/trace-end.sh",
+            "timeout": 10
           }
         ]
       }
@@ -75,6 +108,21 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/git-branch-guard.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sanitize-bash.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-task-gate.sh",
+            "timeout": 5
           }
         ]
       }
@@ -101,59 +149,18 @@
         ]
       }
     ],
-    "SubagentStop": [
-      {
-        "matcher": "taxonomy-extremist",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-research.sh",
-            "timeout": 30
-          }
-        ]
-      },
+    "Stop": [
       {
         "matcher": "babyclaude",
         "hooks": [
           {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/task-completion-capture.sh",
+            "type": "prompt",
+            "prompt": "Evaluate if the babyclaude task implementation is complete. Check: 1) All acceptance criteria addressed, 2) Code compiles/passes lint, 3) Tests pass if applicable, 4) No incomplete TODOs. Return {\"decision\": \"allow\"} if complete, {\"decision\": \"block\", \"reason\": \"...\"} if work remains.",
+            "model": "haiku",
             "timeout": 30
           }
         ]
       },
-      {
-        "matcher": "catastrophiser",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-catastrophiser.sh",
-            "timeout": 30
-          }
-        ]
-      },
-      {
-        "matcher": "cynic",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-cynic.sh",
-            "timeout": 30
-          }
-        ]
-      },
-      {
-        "matcher": "git-perfectionist",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/capture-perfectionist.sh",
-            "timeout": 30
-          }
-        ]
-      }
-    ],
-    "Stop": [
       {
         "matcher": "claudikins-kernel:verify",
         "hooks": [

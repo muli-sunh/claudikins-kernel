@@ -3,19 +3,8 @@ name: claudikins-kernel:execute
 description: Execute validated plans with isolated agents and two-stage review
 argument-hint: [plan-path or --resume or --status]
 model: opus
-color: green
 status: stable
-version: "1.0.0"
-merge_strategy: none
-flags:
-  --resume: Resume from last checkpoint
-  --status: Show current execution status
-  --abort: Abort current execution (saves checkpoint)
-  --batch: Override batch size (default: from plan)
-  --skip-review: Skip code review (spec review still runs)
-  --dry-run: Parse plan and show execution order without running
-  --timing: Show task and batch durations
-  --trace: Show execution trace at completion
+version: "1.1.0"
 agent_outputs:
   - agent: babyclaude
     capture_to: .claude/task-outputs/
@@ -40,11 +29,55 @@ allowed-tools:
   - Skill
 skills:
   - git-workflow
+output-schema:
+  type: object
+  properties:
+    session_id:
+      type: string
+    status:
+      type: string
+      enum: [completed, paused, aborted]
+    plan_source:
+      type: string
+    tasks_completed:
+      type: integer
+    tasks_total:
+      type: integer
+    batches_completed:
+      type: integer
+    batches_total:
+      type: integer
+    branches_merged:
+      type: array
+      items:
+        type: string
+    branches_remaining:
+      type: array
+      items:
+        type: string
+  required: [session_id, status, tasks_completed, tasks_total]
 ---
 
 # claudikins-kernel:execute Command
 
 You are orchestrating a task execution workflow with isolated agents and human checkpoints between batches.
+
+## Flags
+
+| Flag            | Effect                                              |
+| --------------- | --------------------------------------------------- |
+| `--resume`      | Resume from last checkpoint                         |
+| `--status`      | Show current execution status                       |
+| `--abort`       | Abort current execution (saves checkpoint)          |
+| `--batch N`     | Override batch size (default: from plan)            |
+| `--skip-review` | Skip code review (spec review still runs)           |
+| `--dry-run`     | Parse plan and show execution order without running |
+| `--timing`      | Show task and batch durations                       |
+| `--trace`       | Show execution trace at completion                  |
+
+## Merge Strategy
+
+None - task outputs are saved per-task, not merged.
 
 ## Philosophy
 
@@ -575,3 +608,21 @@ On any failure:
 3. Offer: [Retry] [Skip] [Klaus] [Manual intervention] [Abort]
 
 Never lose work. Always checkpoint before risky operations.
+
+## Next Stage
+
+When this command completes, ask:
+
+```
+AskUserQuestion({
+  question: "Execution complete. What next?",
+  header: "Next",
+  options: [
+    { label: "Load /claudikins-kernel:verify", description: "Verify the implementation actually works" },
+    { label: "Stay here", description: "Review output before continuing" },
+    { label: "Done for now", description: "End the workflow" }
+  ]
+})
+```
+
+If user selects "Load /claudikins-kernel:verify", invoke `Skill(claudikins-kernel:verify)`.

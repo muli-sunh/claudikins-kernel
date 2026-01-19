@@ -1,6 +1,18 @@
 ---
 name: git-workflow
 description: Use when running claudikins-kernel:execute, decomposing plans into tasks, setting up two-stage review, deciding batch sizes, or handling stuck agents — enforces isolation, verification, and human checkpoints; prevents runaway parallelization and context death
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - Edit
+  - Write
+  - TodoWrite
+  - Skill
+  - mcp__plugin_claudikins-tool-executor_tool-executor__search_tools
+  - mcp__plugin_claudikins-tool-executor_tool-executor__get_tool_schema
+  - mcp__plugin_claudikins-tool-executor_tool-executor__execute_code
 ---
 
 # Git Workflow Methodology
@@ -35,10 +47,10 @@ Execution is about isolation, verification, and human checkpoints. Not speed.
 **Wrong:** 30 agents for 10 tasks (3 per task micro-management)
 **Right:** 5-7 agents total (feature-level batches)
 
-| Scenario | Wrong | Right |
-|----------|-------|-------|
-| 10 tasks, 5 features | 30 micro-task agents | 5-7 feature agents |
-| Simple refactor | 10 agents for tiny changes | 1-2 feature agents |
+| Scenario             | Wrong                      | Right              |
+| -------------------- | -------------------------- | ------------------ |
+| 10 tasks, 5 features | 30 micro-task agents       | 5-7 feature agents |
+| Simple refactor      | 10 agents for tiny changes | 1-2 feature agents |
 
 Default `--batch 1` is correct. Features are the unit of work.
 
@@ -46,12 +58,12 @@ Default `--batch 1` is correct. Features are the unit of work.
 
 From a plan, extract tasks that are:
 
-| Quality | Definition | Example |
-|---------|------------|---------|
-| **Atomic** | Completable in one agent session | "Add auth middleware" not "Build auth system" |
-| **Testable** | Has measurable acceptance criteria | "Returns 401 for invalid token" |
-| **Independent** | Minimal dependencies on other tasks | Can be reviewed in isolation |
-| **Right-sized** | Not too small (noise) or large (context death) | 50-200 lines of changes |
+| Quality         | Definition                                     | Example                                       |
+| --------------- | ---------------------------------------------- | --------------------------------------------- |
+| **Atomic**      | Completable in one agent session               | "Add auth middleware" not "Build auth system" |
+| **Testable**    | Has measurable acceptance criteria             | "Returns 401 for invalid token"               |
+| **Independent** | Minimal dependencies on other tasks            | Can be reviewed in isolation                  |
+| **Right-sized** | Not too small (noise) or large (context death) | 50-200 lines of changes                       |
 
 See [task-decomposition.md](references/task-decomposition.md) for patterns.
 
@@ -64,6 +76,7 @@ Two reviewers with different jobs. Never skip either.
 **Question:** "Did it do what was asked?"
 
 Checks:
+
 - All acceptance criteria addressed?
 - Any scope creep (features not in spec)?
 - Any missing requirements?
@@ -75,6 +88,7 @@ Output: `PASS` or `FAIL` with line references.
 **Question:** "Is it well-written?"
 
 Checks:
+
 - Consistency with codebase style
 - Error handling
 - Edge cases
@@ -89,11 +103,11 @@ See [review-criteria.md](references/review-criteria.md) for detailed checklists.
 
 What happens when reviewers return their verdicts:
 
-| Spec Result | Code Result | Action |
-|-------------|-------------|--------|
-| PASS | PASS | Offer [Accept] [Revise anyway] |
-| PASS | CONCERNS | Offer [Accept with caveats] [Fix] [Klaus review] |
-| FAIL | * | Always [Revise] or [Retry] |
+| Spec Result | Code Result | Action                                           |
+| ----------- | ----------- | ------------------------------------------------ |
+| PASS        | PASS        | Offer [Accept] [Revise anyway]                   |
+| PASS        | CONCERNS    | Offer [Accept with caveats] [Fix] [Klaus review] |
+| FAIL        | \*          | Always [Revise] or [Retry]                       |
 
 See [review-conflict-matrix.md](references/review-conflict-matrix.md) for edge cases.
 
@@ -119,16 +133,16 @@ See [batch-patterns.md](references/batch-patterns.md) for decision trees.
 
 Agents under pressure find excuses. These are all violations:
 
-| Excuse | Reality |
-|--------|---------|
-| "30 agents is fine, tasks are independent" | More agents = more chaos. 5-7 per session, features as units. |
-| "I'll just checkout main to compare" | Agents don't own git. Use `git show main:file` instead. |
-| "Skip spec review, code looks correct" | Spec review catches scope creep. Never skip. |
-| "Both passed, auto-merge is safe" | Human checkpoint required. Always. |
-| "Context is fine, I'll continue" | ACM at 60% = checkpoint offer. 75% = mandatory stop. |
-| "This tiny task doesn't need a branch" | One task = one branch. No exceptions. Isolation prevents pollution. |
-| "Retry limit is just a guideline" | 2 retries then escalate. Infinite retry = infinite waste. |
-| "I'll merge my changes when done" | Commands own merge. You own implementation. Stay in your lane. |
+| Excuse                                     | Reality                                                             |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| "30 agents is fine, tasks are independent" | More agents = more chaos. 5-7 per session, features as units.       |
+| "I'll just checkout main to compare"       | Agents don't own git. Use `git show main:file` instead.             |
+| "Skip spec review, code looks correct"     | Spec review catches scope creep. Never skip.                        |
+| "Both passed, auto-merge is safe"          | Human checkpoint required. Always.                                  |
+| "Context is fine, I'll continue"           | ACM at 60% = checkpoint offer. 75% = mandatory stop.                |
+| "This tiny task doesn't need a branch"     | One task = one branch. No exceptions. Isolation prevents pollution. |
+| "Retry limit is just a guideline"          | 2 retries then escalate. Infinite retry = infinite waste.           |
+| "I'll merge my changes when done"          | Commands own merge. You own implementation. Stay in your lane.      |
 
 **All of these mean: Follow the methodology. Speed is not the goal.**
 
@@ -278,13 +292,13 @@ See [execution-tracing.md](references/execution-tracing.md).
 
 ## Stuck Detection
 
-| Signal | Threshold | Response |
-|--------|-----------|----------|
-| Tool call flooding | 20 calls without file changes | Warning, then Klaus |
-| Time without progress | 10 minutes | Warning, then Klaus |
-| Repeated failures | Same error 3x | Pause, offer Klaus |
-| Context burn rate | ACM at 60% | Checkpoint offer |
-| Review timeout | 5 minutes per reviewer | Offer [Wait] [Skip] |
+| Signal                | Threshold                     | Response            |
+| --------------------- | ----------------------------- | ------------------- |
+| Tool call flooding    | 20 calls without file changes | Warning, then Klaus |
+| Time without progress | 10 minutes                    | Warning, then Klaus |
+| Repeated failures     | Same error 3x                 | Pause, offer Klaus  |
+| Context burn rate     | ACM at 60%                    | Checkpoint offer    |
+| Review timeout        | 5 minutes per reviewer        | Offer [Wait] [Skip] |
 
 ## Anti-Patterns
 

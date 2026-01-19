@@ -33,8 +33,8 @@ description: |
   </example>
 
 model: opus
+permissionMode: plan
 color: yellow
-context: fork
 status: stable
 background: false
 skills:

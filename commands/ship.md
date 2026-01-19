@@ -3,21 +3,8 @@ name: claudikins-kernel:ship
 description: Final shipping gate. PR creation, documentation updates, and merge with human approval.
 argument-hint: [--branch NAME] [--target BRANCH] [--skip-docs] [--squash|--preserve] [--dry-run]
 model: opus
-color: yellow
 status: stable
-version: "1.0.0"
-merge_strategy: jq
-flags:
-  --branch: Ship specific branch (default: current)
-  --target: Target branch for merge (default: main)
-  --skip-docs: Skip documentation updates (Stage 3)
-  --squash: Squash commits into single commit
-  --preserve: Preserve commit history
-  --dry-run: Preview ship without merging
-  --session-id: Resume previous session by ID
-  --resume: Resume from last checkpoint
-  --status: Show current ship status
-  --list-sessions: Show available sessions for resume
+version: "1.1.0"
 agent_outputs:
   - agent: git-perfectionist
     capture_to: .claude/agent-outputs/documentation/
@@ -33,11 +20,54 @@ allowed-tools:
   - Skill
 skills:
   - shipping-methodology
+output-schema:
+  type: object
+  properties:
+    session_id:
+      type: string
+    status:
+      type: string
+      enum: [shipped, paused, aborted, dry-run]
+    source_branch:
+      type: string
+    target_branch:
+      type: string
+    pr_url:
+      type: string
+    merge_strategy:
+      type: string
+      enum: [squash, preserve, rebase]
+    docs_updated:
+      type: array
+      items:
+        type: string
+    commit_sha:
+      type: string
+  required: [session_id, status, source_branch, target_branch]
 ---
 
 # claudikins-kernel:ship Command
 
 You are orchestrating a shipping workflow that takes verified code to production with human approval at every stage.
+
+## Flags
+
+| Flag              | Effect                                  |
+| ----------------- | --------------------------------------- |
+| `--branch NAME`   | Ship specific branch (default: current) |
+| `--target BRANCH` | Target branch for merge (default: main) |
+| `--skip-docs`     | Skip documentation updates (Stage 3)    |
+| `--squash`        | Squash commits into single commit       |
+| `--preserve`      | Preserve commit history                 |
+| `--dry-run`       | Preview ship without merging            |
+| `--session-id ID` | Resume previous session by ID           |
+| `--resume`        | Resume from last checkpoint             |
+| `--status`        | Show current ship status                |
+| `--list-sessions` | Show available sessions for resume      |
+
+## Merge Strategy
+
+JQ merge - documentation outputs are combined with `jq -s 'add'`.
 
 ## Philosophy
 
@@ -502,3 +532,21 @@ Status: ${STATUS}
 
 [Continue] [Restart] [Abort]
 ```
+
+## Next Stage
+
+When this command completes, ask:
+
+```
+AskUserQuestion({
+  question: "Shipped! Ready for next feature?",
+  header: "Next",
+  options: [
+    { label: "Load /claudikins-kernel:outline", description: "Plan the next feature" },
+    { label: "Stay here", description: "Review output before continuing" },
+    { label: "Done for now", description: "End the workflow" }
+  ]
+})
+```
+
+If user selects "Load /claudikins-kernel:outline", invoke `Skill(claudikins-kernel:outline)`.

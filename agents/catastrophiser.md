@@ -33,8 +33,8 @@ description: |
   </example>
 
 model: opus
+permissionMode: default
 color: purple
-context: fork
 status: stable
 background: true
 skills:
@@ -53,6 +53,12 @@ disallowedTools:
   - Write
   - Task
   - TodoWrite
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/capture-catastrophiser.sh"
+          timeout: 30
 ---
 
 # catastrophiser

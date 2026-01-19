@@ -3,21 +3,8 @@ name: claudikins-kernel:verify
 description: Post-execution verification gate. Tests, lint, type-check, then see it working.
 argument-hint: [--branch NAME] [--scope SCOPE] [--skip-simplify] [--fix-lint]
 model: opus
-color: purple
 status: stable
-version: "1.0.0"
-merge_strategy: jq
-flags:
-  --branch: Verify specific branch (default: current)
-  --scope: test|lint|types|all (default: all)
-  --skip-simplify: Skip cynic polish pass
-  --fix-lint: Auto-apply lint fixes
-  --fast-mode: 60-second iteration cycles
-  --session-id: Resume previous session by ID
-  --timing: Show phase durations for velocity tracking
-  --list-sessions: Show available sessions for resume
-  --resume: Resume from last checkpoint
-  --status: Show current verification status
+version: "1.1.0"
 agent_outputs:
   - agent: catastrophiser
     capture_to: .claude/agent-outputs/verification/
@@ -36,11 +23,62 @@ allowed-tools:
   - Skill
 skills:
   - strict-enforcement
+output-schema:
+  type: object
+  properties:
+    session_id:
+      type: string
+    status:
+      type: string
+      enum: [passed, failed, partial]
+    branch:
+      type: string
+    phases:
+      type: object
+      properties:
+        tests:
+          type: string
+          enum: [passed, failed, skipped]
+        lint:
+          type: string
+          enum: [passed, failed, skipped]
+        types:
+          type: string
+          enum: [passed, failed, skipped]
+        visual:
+          type: string
+          enum: [passed, failed, skipped]
+    simplification_applied:
+      type: boolean
+    evidence_paths:
+      type: array
+      items:
+        type: string
+  required: [session_id, status, phases]
 ---
 
 # claudikins-kernel:verify Command
 
 You are orchestrating a verification workflow that ensures code actually works before shipping.
+
+## Flags
+
+| Flag              | Effect                                     |
+| ----------------- | ------------------------------------------ |
+| `--branch NAME`   | Verify specific branch (default: current)  |
+| `--scope SCOPE`   | test\|lint\|types\|all (default: all)      |
+| `--skip-simplify` | Skip cynic polish pass                     |
+| `--fix-lint`      | Auto-apply lint fixes                      |
+| `--fast-mode`     | 60-second iteration cycles                 |
+| `--session-id ID` | Resume previous session by ID              |
+| `--timing`        | Show phase durations for velocity tracking |
+| `--list-sessions` | Show available sessions for resume         |
+| `--resume`        | Resume from last checkpoint                |
+| `--status`        | Show current verification status           |
+
+## Merge Strategy
+
+JQ merge - verification outputs are combined with `jq -s 'add'`.
 
 ## Philosophy
 
@@ -493,3 +531,21 @@ Status: ${STATUS}
 
 [Continue] [Restart] [Abort]
 ```
+
+## Next Stage
+
+When this command completes, ask:
+
+```
+AskUserQuestion({
+  question: "Verification passed. What next?",
+  header: "Next",
+  options: [
+    { label: "Load /claudikins-kernel:ship", description: "Ship the verified code" },
+    { label: "Stay here", description: "Review output before continuing" },
+    { label: "Done for now", description: "End the workflow" }
+  ]
+})
+```
+
+If user selects "Load /claudikins-kernel:ship", invoke `Skill(claudikins-kernel:ship)`.

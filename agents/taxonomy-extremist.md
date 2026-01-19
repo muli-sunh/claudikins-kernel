@@ -33,8 +33,8 @@ description: |
   </example>
 
 model: opus
+permissionMode: plan
 color: blue
-context: fork
 status: stable
 background: false
 skills:
@@ -54,6 +54,12 @@ disallowedTools:
   - Write
   - Bash
   - Task
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/capture-research.sh"
+          timeout: 30
 ---
 
 # taxonomy-extremist

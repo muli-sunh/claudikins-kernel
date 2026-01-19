@@ -1,6 +1,16 @@
 ---
 name: strict-enforcement
 description: Use when running claudikins-kernel:verify, checking implementation quality, deciding pass/fail verdicts, or enforcing cross-command gates — requires actual evidence of code working, not just passing tests
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - WebFetch
+  - Skill
+  - mcp__plugin_claudikins-tool-executor_tool-executor__search_tools
+  - mcp__plugin_claudikins-tool-executor_tool-executor__get_tool_schema
+  - mcp__plugin_claudikins-tool-executor_tool-executor__execute_code
 ---
 
 # Strict Enforcement Verification Methodology

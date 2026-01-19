@@ -1,6 +1,16 @@
 ---
-name: planning-methodology
+name: brain-jam-plan
 description: Use when running claudikins-kernel:outline, brainstorming implementation approaches, gathering requirements iteratively, structuring complex technical plans, or facing analysis paralysis with too many options — provides iterative human-in-the-loop planning with explicit checkpoints and trade-off presentation
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - TodoWrite
+  - WebSearch
+  - Skill
+  - mcp__plugin_claudikins-tool-executor_tool-executor__search_tools
+  - mcp__plugin_claudikins-tool-executor_tool-executor__get_tool_schema
+  - mcp__plugin_claudikins-tool-executor_tool-executor__execute_code
 ---
 
 # Brain-Jam Planning Methodology

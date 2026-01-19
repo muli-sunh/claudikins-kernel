@@ -1,6 +1,17 @@
 ---
 name: shipping-methodology
 description: Use when running claudikins-kernel:ship, preparing PRs, writing changelogs, deciding merge strategy, or handling CI failures — enforces GRFP-style iterative approval, code integrity validation, and human-gated merges
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - Edit
+  - AskUserQuestion
+  - Skill
+  - mcp__plugin_claudikins-tool-executor_tool-executor__search_tools
+  - mcp__plugin_claudikins-tool-executor_tool-executor__get_tool_schema
+  - mcp__plugin_claudikins-tool-executor_tool-executor__execute_code
 ---
 
 # Shipping Methodology
@@ -36,14 +47,15 @@ Shipping is the final gate. Apply GRFP-style iterative workflow to every stage.
 
 Show what's being shipped. Human confirms ready.
 
-| Check | What to Show |
-|-------|--------------|
-| Verification status | All phases PASS from claudikins-kernel:verify |
-| Branches to merge | List all execute/task-* branches |
-| Evidence summary | Screenshots, curl responses from catastrophiser |
-| Code delta | Lines added/removed, files changed |
+| Check               | What to Show                                    |
+| ------------------- | ----------------------------------------------- |
+| Verification status | All phases PASS from claudikins-kernel:verify   |
+| Branches to merge   | List all execute/task-\* branches               |
+| Evidence summary    | Screenshots, curl responses from catastrophiser |
+| Code delta          | Lines added/removed, files changed              |
 
 **Checkpoint:**
+
 ```
 Ready to ship?
 
@@ -59,6 +71,7 @@ Changes: +450 / -120 lines
 Draft commit message(s). Human approves.
 
 **Decision:**
+
 ```
 How should we commit?
 
@@ -66,16 +79,19 @@ How should we commit?
 ```
 
 **Squash (recommended for features):**
+
 - Single clean commit on main
 - Clear feature boundary
 - Easier to revert if needed
 
 **Preserve (for large multi-part work):**
+
 - Keeps granular history
 - Better for debugging
 - Use for multi-feature batches
 
 **Checkpoint:**
+
 ```
 Commit message:
 
@@ -95,6 +111,7 @@ Closes #42
 Update README, CHANGELOG, version. GRFP-style.
 
 **git-perfectionist uses github-readme plugin:**
+
 1. Deep-dive on current docs
 2. Identify gaps from changes
 3. Pen-wielding for updates
@@ -102,13 +119,14 @@ Update README, CHANGELOG, version. GRFP-style.
 
 **Files to update:**
 
-| File | What to Update |
-|------|----------------|
-| README.md | Features, usage, installation if changed |
-| CHANGELOG.md | Add entry in Keep a Changelog format |
-| package.json / Cargo.toml / pyproject.toml | Version bump if needed |
+| File                                       | What to Update                           |
+| ------------------------------------------ | ---------------------------------------- |
+| README.md                                  | Features, usage, installation if changed |
+| CHANGELOG.md                               | Add entry in Keep a Changelog format     |
+| package.json / Cargo.toml / pyproject.toml | Version bump if needed                   |
 
 **Checkpoint:**
+
 ```
 Documentation updates:
 
@@ -129,26 +147,33 @@ Version: 1.1.0 → 1.2.0 (minor)
 Draft PR title and body. Section-by-section approval.
 
 **PR Title Pattern:**
+
 ```
 feat(scope): Short description
 ```
 
 **PR Body Structure:**
+
 ```markdown
 ## Summary
+
 [2-3 bullet points of what changed]
 
 ## Changes
+
 [Detailed breakdown]
 
 ## Testing
+
 [How it was verified]
 
 ## Screenshots
+
 [If applicable]
 ```
 
 **Checkpoint:**
+
 ```
 PR ready to create:
 
@@ -168,6 +193,7 @@ Body:
 CI passes. Human approves. Merge and cleanup.
 
 **CI Status Check:**
+
 ```
 CI Status: ⏳ Running...
 
@@ -175,6 +201,7 @@ CI Status: ⏳ Running...
 ```
 
 **On CI pass:**
+
 ```
 CI Status: ✓ All checks passed
 
@@ -184,11 +211,13 @@ Ready to merge PR #42 to main?
 ```
 
 **After merge:**
+
 - Delete feature branches (unless --no-delete-branch)
 - Update ship-state.json
 - Celebrate
 
 **Final output:**
+
 ```
 Done! Shipped to main.
 
@@ -203,17 +232,17 @@ Nice work!
 
 Agents under pressure find excuses. These are all violations:
 
-| Excuse | Reality |
-|--------|---------|
-| "Verify passed yesterday, close enough" | Stale verification = no verification. Re-run claudikins-kernel:verify. |
+| Excuse                                      | Reality                                                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------ |
+| "Verify passed yesterday, close enough"     | Stale verification = no verification. Re-run claudikins-kernel:verify.   |
 | "Just a tiny fix after verify, no big deal" | Any change after verify invalidates it. Re-run claudikins-kernel:verify. |
-| "CI is flaky, I'll merge anyway" | Flaky CI hides real failures. Fix or explicitly skip with caveat. |
-| "It's just a typo, skip the PR" | All changes go through PR. No exceptions. |
-| "Both reviewers passed, auto-merge is fine" | Human approves final merge. Always. |
-| "I'll update the changelog later" | Changelog is part of shipping. Do it now. |
-| "Force push is fine, it's my branch" | Never force push to protected branches. Ever. |
-| "Skip docs, nobody reads them" | Docs are part of shipping. GRFP them. |
-| "The gate check is too strict" | The gate exists for a reason. Pass it properly. |
+| "CI is flaky, I'll merge anyway"            | Flaky CI hides real failures. Fix or explicitly skip with caveat.        |
+| "It's just a typo, skip the PR"             | All changes go through PR. No exceptions.                                |
+| "Both reviewers passed, auto-merge is fine" | Human approves final merge. Always.                                      |
+| "I'll update the changelog later"           | Changelog is part of shipping. Do it now.                                |
+| "Force push is fine, it's my branch"        | Never force push to protected branches. Ever.                            |
+| "Skip docs, nobody reads them"              | Docs are part of shipping. GRFP them.                                    |
+| "The gate check is too strict"              | The gate exists for a reason. Pass it properly.                          |
 
 **All of these mean: Follow the methodology. Shortcuts create incidents.**
 
@@ -276,6 +305,7 @@ fi
 ```
 
 **If integrity check fails:**
+
 ```
 Code has changed since verification.
 
@@ -288,6 +318,7 @@ Current commit:  def456
 ## Commit Message Patterns
 
 ### Feature
+
 ```
 feat(scope): Short description
 
@@ -298,6 +329,7 @@ Closes #123
 ```
 
 ### Bug Fix
+
 ```
 fix(scope): Short description
 
@@ -308,6 +340,7 @@ Fixes #456
 ```
 
 ### Breaking Change
+
 ```
 feat(scope)!: Short description
 
@@ -318,6 +351,7 @@ BREAKING CHANGE: What breaks and migration path
 ```
 
 ### Chore (no user-facing change)
+
 ```
 chore(scope): Short description
 
@@ -335,16 +369,21 @@ Follow Keep a Changelog format:
 ## [Unreleased]
 
 ## [1.2.0] - 2026-01-17
+
 ### Added
+
 - Authentication middleware with JWT support (#42)
 
 ### Changed
+
 - Updated error messages for clarity
 
 ### Fixed
+
 - Token refresh race condition (#38)
 
 ## [1.1.0] - 2026-01-10
+
 ...
 ```
 
@@ -365,6 +404,7 @@ Retry 1/3...
 **Pattern:** Max 3 retries with exponential backoff.
 
 **If persistent:**
+
 ```
 GitHub API unavailable after 3 retries.
 
@@ -408,14 +448,15 @@ See [force-push-protection.md](references/force-push-protection.md) for safeguar
 
 Detect breaking changes before shipping:
 
-| Signal | Indicates |
-|--------|-----------|
-| Removed public function | Breaking |
-| Changed function signature | Breaking |
-| Removed config option | Breaking |
-| Changed default behaviour | Potentially breaking |
+| Signal                     | Indicates            |
+| -------------------------- | -------------------- |
+| Removed public function    | Breaking             |
+| Changed function signature | Breaking             |
+| Removed config option      | Breaking             |
+| Changed default behaviour  | Potentially breaking |
 
 **If breaking change detected:**
+
 ```
 Breaking change detected!
 
@@ -454,7 +495,10 @@ See [breaking-change-detection.md](references/breaking-change-detection.md) for 
   "phases": {
     "pre_ship_review": { "status": "APPROVED" },
     "commit_strategy": { "status": "APPROVED", "strategy": "squash" },
-    "documentation": { "status": "APPROVED", "files_updated": ["README.md", "CHANGELOG.md"] },
+    "documentation": {
+      "status": "APPROVED",
+      "files_updated": ["README.md", "CHANGELOG.md"]
+    },
     "pr_creation": { "status": "CREATED", "pr_number": 42 },
     "merge": { "status": "MERGED", "sha": "abc123" }
   },

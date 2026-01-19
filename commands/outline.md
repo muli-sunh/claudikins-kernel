@@ -3,19 +3,8 @@ name: claudikins-kernel:outline
 description: Iterative planning with human checkpoints at every phase
 argument-hint: [--session-id ID] [--skip-research] [--skip-review] [--fast-mode]
 model: opus
-color: blue
 status: stable
-version: "1.0.1"
-merge_strategy: none
-flags:
-  --session-id: Resume previous session by ID
-  --skip-research: Skip Phase 2 research
-  --skip-review: Skip Phase 5 review
-  --fast-mode: 60-second iteration cycles
-  --timing: Show phase durations for velocity tracking
-  --list-sessions: Show available sessions for resume
-  --output: Plan destination path
-  --run-verify: Run verification anytime
+version: "1.1.0"
 agent_outputs:
   - agent: taxonomy-extremist
     capture_to: .claude/agent-outputs/research/
@@ -30,12 +19,48 @@ allowed-tools:
   - TodoWrite
   - Skill
 skills:
-  - planning-methodology
+  - brain-jam-plan
+output-schema:
+  type: object
+  properties:
+    session_id:
+      type: string
+    status:
+      type: string
+      enum: [completed, paused, aborted]
+    plan_path:
+      type: string
+    phases_completed:
+      type: array
+      items:
+        type: string
+    tasks_count:
+      type: integer
+    batches_count:
+      type: integer
+  required: [session_id, status, plan_path]
 ---
 
 # claudikins-kernel:outline Command
 
 You are orchestrating an iterative planning workflow with human checkpoints at every phase.
+
+## Flags
+
+| Flag              | Effect                                     |
+| ----------------- | ------------------------------------------ |
+| `--session-id ID` | Resume previous session by ID              |
+| `--skip-research` | Skip Phase 2 research                      |
+| `--skip-review`   | Skip Phase 5 review                        |
+| `--fast-mode`     | 60-second iteration cycles                 |
+| `--timing`        | Show phase durations for velocity tracking |
+| `--list-sessions` | Show available sessions for resume         |
+| `--output PATH`   | Plan destination path                      |
+| `--run-verify`    | Run verification anytime                   |
+
+## Merge Strategy
+
+None - outputs are not merged.
 
 ## Philosophy
 
@@ -76,7 +101,7 @@ State file: `.claude/plan-state.json`
 
 ## Phase 1: Brain-Jam
 
-Load the `planning-methodology` skill for methodology.
+Load the `brain-jam-plan` skill for methodology.
 
 **Requirements gathering:**
 
@@ -305,3 +330,21 @@ On PreCompact event:
 2. Mark session as "interrupted" (not abandoned)
 3. Resume instructions written to state file
 4. On resume, offer: [Continue from checkpoint] [Start fresh]
+
+## Next Stage
+
+When this command completes, ask:
+
+```
+AskUserQuestion({
+  question: "Plan ready. What next?",
+  header: "Next",
+  options: [
+    { label: "Load /claudikins-kernel:execute", description: "Execute the plan with isolated agents" },
+    { label: "Stay here", description: "Review output before continuing" },
+    { label: "Done for now", description: "End the workflow" }
+  ]
+})
+```
+
+If user selects "Load /claudikins-kernel:execute", invoke `Skill(claudikins-kernel:execute)`.

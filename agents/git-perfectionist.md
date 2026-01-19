@@ -33,8 +33,8 @@ description: |
   </example>
 
 model: opus
+permissionMode: acceptEdits
 color: green
-context: fork
 status: stable
 background: false
 skills:
@@ -50,6 +50,12 @@ disallowedTools:
   - Write
   - Task
   - TodoWrite
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/capture-perfectionist.sh"
+          timeout: 30
 ---
 
 # git-perfectionist
