@@ -51,6 +51,7 @@ claudikins-kernel applies SRE discipline to AI workflows. It enforces a strict 4
 
 ```bash
 # Prerequisites: jq (JSON processor)
+# Windows: winget install jqlang.jq
 # Ubuntu/Debian: sudo apt install jq
 # macOS: brew install jq
 
