@@ -66,7 +66,7 @@ Restart Claude Code. Then:
 
 ```bash
 # Start your first disciplined session
-/outline "Add user authentication to the app"
+/claudikins-kernel:outline "Add user authentication to the app"
 ```
 
 ---
