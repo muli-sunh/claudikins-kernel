@@ -1,10 +1,8 @@
 ---
 name: claudikins-kernel:execute
 description: Execute validated plans with isolated agents and two-stage review
-argument-hint: [plan-path or --resume or --status]
+argument-hint: <plan-path> | --resume | --status
 model: opus
-status: stable
-version: "1.1.1"
 agent_outputs:
   - agent: babyclaude
     capture_to: .claude/task-outputs/

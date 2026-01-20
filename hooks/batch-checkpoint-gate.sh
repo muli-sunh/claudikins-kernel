@@ -106,13 +106,11 @@ else
     RESUME_MSG="Checkpoint saved at batch $CURRENT_BATCH. Run claudikins-kernel:execute --resume to continue."
 fi
 
-# Output checkpoint notification
+# Output checkpoint notification (Stop hooks use stopReason, not hookSpecificOutput)
 cat <<EOF
 {
-  "hookSpecificOutput": {
-    "hookEventName": "Stop",
-    "additionalContext": "CHECKPOINT SAVED\\n\\nCheckpoint: ${CHECKPOINT_ID}\\nBatch: ${CURRENT_BATCH}\\nCompleted: ${COMPLETED_TASKS}/${TOTAL_TASKS} tasks\\n\\n${RESUME_MSG}"
-  }
+  "continue": false,
+  "stopReason": "CHECKPOINT SAVED\\n\\nCheckpoint: ${CHECKPOINT_ID}\\nBatch: ${CURRENT_BATCH}\\nCompleted: ${COMPLETED_TASKS}/${TOTAL_TASKS} tasks\\n\\n${RESUME_MSG}"
 }
 EOF
 

@@ -1,10 +1,7 @@
 ---
 name: claudikins-kernel:ship
 description: Final shipping gate. PR creation, documentation updates, and merge with human approval.
-argument-hint: [--branch NAME] [--target BRANCH] [--skip-docs] [--squash|--preserve] [--dry-run]
-model: opus
-status: stable
-version: "1.1.1"
+argument-hint: <branch-name> [--target main|develop] [--skip-docs] [--squash|--preserve] [--dry-run]
 agent_outputs:
   - agent: git-perfectionist
     capture_to: .claude/agent-outputs/documentation/

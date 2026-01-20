@@ -1,10 +1,7 @@
 ---
 name: claudikins-kernel:outline
 description: Iterative planning with human checkpoints at every phase
-argument-hint: [--session-id ID] [--skip-research] [--skip-review] [--fast-mode]
-model: opus
-status: stable
-version: "1.1.1"
+argument-hint: <task-description> [--session-id ID] [--skip-research] [--skip-review] [--fast-mode]
 agent_outputs:
   - agent: taxonomy-extremist
     capture_to: .claude/agent-outputs/research/
@@ -288,7 +285,7 @@ Task(klaus, {
 
 ## Output
 
-Save plan to specified path (default: `.claude/plans/plan-${session_id}.md`)
+Save plan to user project path (default: `.claude/kernel-outlines/outline-${session_id}.md`)
 
 Include machine-readable task markers for claudikins-kernel:execute compatibility.
 

@@ -1,10 +1,8 @@
 ---
 name: claudikins-kernel:verify
 description: Post-execution verification gate. Tests, lint, type-check, then see it working.
-argument-hint: [--branch NAME] [--scope SCOPE] [--skip-simplify] [--fix-lint]
+argument-hint: <branch-name> [--scope tests|lint|types|all] [--skip-simplify] [--fix-lint]
 model: opus
-status: stable
-version: "1.1.1"
 agent_outputs:
   - agent: catastrophiser
     capture_to: .claude/agent-outputs/verification/
