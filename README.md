@@ -10,9 +10,9 @@
 
 <h1 align="center">Claudikins Kernel</h1>
 
-<p align="center"><strong>Industrial-grade guardrails for Claude Code.</strong></p>
+<p align="center"><strong>We call it Claudikins because "Draconian-AI-Supervisor" was taken.</strong></p>
 
-<p align="center"><em>A disciplined workflow engine run by a team of neurotic AI agents.<br>We call it Claudikins because "Draconian-AI-Supervisor" was taken.</em></p>
+<p align="center"><em>A disciplined workflow engine run by a team of neurotic AI agents.<br>
 
 ---
 
