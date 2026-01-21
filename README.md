@@ -22,7 +22,7 @@
 
 **You asked Claude for a feature. He placed a bunch of stubs that look a little bit real.**
 
-**You asked Claude if you should drink that coffee you forgot about, now you're sick. Maybe that one was just me, but the point stands!**
+**You asked Claude if you should drink that coffee you forgot about, now you're sick. Okay, maybe that one was just me, but the point still stands!**
 
 claudikins-kernel applies SRE discipline to AI workflows. It enforces a strict 4-stage pipeline with **gates between each step**. You literally cannot skip verification. You cannot ship without the Cynic's approval.
 
@@ -189,8 +189,8 @@ sudo apt install jq
 # macOS
 brew install jq
 
-# Windows (scoop)
-scoop install jq
+# Windows 
+winget install jqlang.jq
 ```
 
 ### Recommended Plugins
@@ -210,7 +210,7 @@ scoop install jq
 
 ## Status
 
-**v1.1.2** - Fully functional. Four commands, eight agents, 27 hooks.
+**v1.2.0** - Full Release - Regularly Maintained.
 
 [View the marketplace](https://github.com/elb-pr/claudikins-marketplace) | [Changelog](CHANGELOG.md)
 
