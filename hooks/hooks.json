@@ -113,6 +113,11 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sanitize-bash.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/merge-gate.sh",
+            "timeout": 10
           }
         ]
       },
@@ -150,17 +155,6 @@
       }
     ],
     "Stop": [
-      {
-        "matcher": "babyclaude",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Evaluate if the babyclaude task implementation is complete. Check: 1) All acceptance criteria addressed, 2) Code compiles/passes lint, 3) Tests pass if applicable, 4) No incomplete TODOs. Return {\"ok\": true} if complete, {\"ok\": false, \"reason\": \"...\"} if work remains.",
-            "model": "haiku",
-            "timeout": 30
-          }
-        ]
-      },
       {
         "matcher": "claudikins-kernel:verify",
         "hooks": [

@@ -271,11 +271,76 @@ The hook:
 
 ### 2.2 Agent Spawning
 
+**Test Task Detection:**
+
+Before spawning babyclaude, check if this is a test task:
+
 ```typescript
+const isTestTask = task.name.toLowerCase().includes('test') ||
+                   task.type === 'Test' ||
+                   task.files.some(f => f.includes('.test.') || f.includes('.spec.'));
+```
+
+**Implementation Source Injection (for test tasks):**
+
+If `isTestTask` is true, the orchestrator MUST:
+
+1. Identify dependency tasks from `task.deps`
+2. Read the implementation files from those completed dependencies
+3. Inject them into the prompt as `## Implementation Sources to Test`
+
+```typescript
+let implementationSources = '';
+
+if (isTestTask && task.deps.length > 0) {
+  // Gather implementation files from completed dependency tasks
+  const depTasks = task.deps.map(depId =>
+    state.tasks.find(t => t.id === depId)
+  ).filter(t => t && t.status === 'complete');
+
+  const implFiles = depTasks.flatMap(t => t.files_changed || t.files);
+
+  // Read each implementation file
+  implementationSources = `
+## Implementation Sources to Test
+
+The following implementation files are from your dependency tasks.
+You MUST read these to understand the actual interfaces - do NOT assume or hallucinate.
+
+${implFiles.map(f => `- ${f}`).join('\n')}
+
+Read these files FIRST before writing any tests.
+`;
+}
+```
+
+**Spawning babyclaude:**
+
+**CRITICAL: Worktree Isolation**
+
+The SubagentStart hook (create-task-branch.sh) creates a worktree for each task and returns the path in `additionalContext`. You MUST:
+
+1. Parse the worktree path from the hook output
+2. Pass it to babyclaude so it operates in isolation
+3. Verify babyclaude's commits go to the correct branch
+
+```typescript
+// Get worktree path from SubagentStart hook output (stored in state)
+const worktreePath = state.tasks.find(t => t.id === task.id)?.worktree_path;
+
+if (!worktreePath) {
+  // Hook didn't create worktree - this is a bug, abort
+  throw new Error(`No worktree for task ${task.id}. Check create-task-branch.sh hook.`);
+}
+
 Task(babyclaude, {
   prompt: `
     TASK_ID: ${task.id}
     TASK_SLUG: ${task.slug}
+
+    WORKTREE: ${worktreePath}
+    **IMPORTANT: All your file operations MUST be in the worktree directory above.**
+    Use absolute paths or cd to the worktree first.
 
     Implement: ${task.name}
 
@@ -283,8 +348,9 @@ Task(babyclaude, {
 
     Acceptance criteria:
     ${task.criteria.map((c) => `- ${c}`).join("\n")}
-
+    ${implementationSources}
     Requirements:
+    - Work ONLY in ${worktreePath} (your isolated worktree)
     - Implement EXACTLY what is specified
     - Do NOT add features beyond the spec
     - Commit your changes when complete
@@ -292,8 +358,11 @@ Task(babyclaude, {
   `,
   context: "fork",
   model: "opus",
+  cwd: worktreePath, // CRITICAL: Run babyclaude in its isolated worktree
 });
 ```
+
+**Why worktree isolation matters:** Without this, parallel babyclaude agents share the same working directory. Their commits collide on whichever branch is checked out. Each agent MUST operate in its own worktree.
 
 ### 2.3 Branch Guard (via git-branch-guard.sh hook)
 
@@ -324,6 +393,27 @@ On SubagentStop:
 ## Phase 3: Task Review
 
 After task completes, two-stage review:
+
+### CRITICAL: Review Enforcement
+
+**You MUST spawn the reviewer agents. Inline reviews are VIOLATIONS.**
+
+| ✅ CORRECT | ❌ VIOLATION |
+|-----------|-------------|
+| `Task(spec-reviewer, {...})` | Creating your own compliance table |
+| `Task(code-reviewer, {...})` | "Let me verify the implementation" |
+| Reading `.claude/reviews/spec/*.json` | Writing "Verdict: PASS" yourself |
+
+**The orchestrator does NOT review. The orchestrator SPAWNS reviewers.**
+
+Before proceeding to Phase 4 (Batch Review), verify:
+```
+□ .claude/reviews/spec/{task_id}.json EXISTS
+□ .claude/reviews/code/{task_id}.json EXISTS
+□ Files contain valid JSON with "verdict" field
+```
+
+If files are missing: **STOP. You skipped the review. Go back and spawn the agents.**
 
 ### 3.1 Spec Review
 

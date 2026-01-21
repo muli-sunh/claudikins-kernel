@@ -99,6 +99,57 @@ Output: `PASS` or `CONCERNS` with confidence scores.
 
 See [review-criteria.md](references/review-criteria.md) for detailed checklists.
 
+## Review Enforcement (MANDATORY)
+
+**This is non-negotiable. Violations here break the entire workflow.**
+
+### The Iron Rule
+
+After EVERY task completes, you MUST spawn BOTH reviewer agents:
+
+1. **spec-reviewer** - Spawned via `Task(spec-reviewer, {...})`
+2. **code-reviewer** - Spawned via `Task(code-reviewer, {...})` (if spec passes)
+
+### What "MUST spawn" Means
+
+| Allowed | NOT Allowed |
+|---------|-------------|
+| `Task(spec-reviewer, { prompt: "...", context: "fork" })` | Inline spec check by orchestrator |
+| `Task(code-reviewer, { prompt: "...", context: "fork" })` | "I'll just verify the code looks good" |
+| Waiting for agent output JSON | Making your own compliance table |
+| Reading from `.claude/reviews/spec/` | Skipping because "it's a simple task" |
+
+### Inline Reviews Are VIOLATIONS
+
+If you find yourself doing ANY of these, you are VIOLATING the methodology:
+
+- Creating a "Spec Compliance Check" table yourself
+- Writing "Verdict: PASS" without spawning an agent
+- Saying "Let me verify the implementation meets criteria"
+- Checking acceptance criteria in a loop instead of delegating
+
+**The orchestrator does NOT review. The orchestrator SPAWNS reviewers.**
+
+### Pre-Merge Checklist (HARD GATE)
+
+Before ANY merge decision can be offered to the user:
+
+```
+□ .claude/reviews/spec/{task_id}.json EXISTS for each task
+□ .claude/reviews/code/{task_id}.json EXISTS for each task
+□ Both files contain valid JSON with "verdict" field
+□ spec-reviewer verdict is PASS (or user override documented)
+```
+
+If ANY file is missing: **DO NOT proceed to merge. You skipped the review.**
+
+### Why This Matters
+
+1. **Consistency** - Every task gets the same rigor, not "looks simple, I'll check it"
+2. **Auditability** - Review outputs are artifacts, not orchestrator judgments
+3. **Separation of concerns** - Orchestrator orchestrates, reviewers review
+4. **No rationalization** - You can't convince yourself your inline check is "good enough"
+
 ## Verdict Matrix
 
 What happens when reviewers return their verdicts:
@@ -138,6 +189,7 @@ Agents under pressure find excuses. These are all violations:
 | "30 agents is fine, tasks are independent" | More agents = more chaos. 5-7 per session, features as units.       |
 | "I'll just checkout main to compare"       | Agents don't own git. Use `git show main:file` instead.             |
 | "Skip spec review, code looks correct"     | Spec review catches scope creep. Never skip.                        |
+| "I'll do the review myself, it's simple"   | Spawn the reviewer agents. Inline reviews are VIOLATIONS.           |
 | "Both passed, auto-merge is safe"          | Human checkpoint required. Always.                                  |
 | "Context is fine, I'll continue"           | ACM at 60% = checkpoint offer. 75% = mandatory stop.                |
 | "This tiny task doesn't need a branch"     | One task = one branch. No exceptions. Isolation prevents pollution. |
@@ -158,8 +210,10 @@ If you're thinking any of these, you're about to violate the methodology:
 - "I'll merge it myself"
 - "Retry limit doesn't apply here"
 - "Spec review is redundant if code review passes"
+- "Let me verify the implementation meets criteria" (SPAWN THE AGENT)
+- "I'll create a quick compliance table" (SPAWN THE AGENT)
 
-**All of these mean: STOP. Commands own git. Humans own checkpoints. You own implementation.**
+**All of these mean: STOP. Commands own git. Humans own checkpoints. Reviewers own reviews. You own orchestration.**
 
 ## Robustness Patterns
 

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-21
+
+### Added
+
+- **Review Enforcement** in git-workflow skill and execute.md - reviewer agents (spec-reviewer, code-reviewer) MUST be spawned; inline reviews are now violations
+- Pre-merge checklist requiring `.claude/reviews/spec/` and `.claude/reviews/code/` files to exist
+- Test task detection and implementation source injection in execute.md - prevents test agents from hallucinating interfaces
+- Defensive "For Test Tasks" section in babyclaude.md - blocks if implementation sources not provided
+- Worktree path injection in babyclaude spawn with `cwd: worktreePath` for proper isolation
+
+### Changed
+
+- `git-branch-guard.sh` switched from blocklist to **allowlist** approach - only permits safe git commands (add, status, diff, log, show, ls-files, check-ignore, rev-parse, symbolic-ref, config --get/--list, commit)
+- Rationalizations table updated with "I'll do the review myself" violation
+- Red flags updated with inline review warnings
+
+### Fixed
+
+- Branch collision bug - parallel babyclaude agents now operate in isolated worktrees instead of shared working directory
+- `preserve-state.sh` PreCompact hook now always outputs valid JSON (even for no-op cases)
+- Phase-aware resume commands in preserve-state.sh (outline/execute/verify/ship)
+
 ## [1.1.3] - 2026-01-20
 
 ### Changed

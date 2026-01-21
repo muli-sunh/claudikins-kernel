@@ -141,12 +141,57 @@ fi
 # Clear current_task (ready for next task)
 jq '.current_task = null' "$STATE_FILE" > "${STATE_FILE}.tmp" && mv "${STATE_FILE}.tmp" "$STATE_FILE"
 
-# Output context for logging
+# Get worktree path to capture diff for reviewers
+WORKTREE_PATH=$(jq -r --arg taskId "$CURRENT_TASK" \
+    '(.tasks[] | select(.id == $taskId)).worktree_path // ""' \
+    "$STATE_FILE" 2>/dev/null || echo "")
+
+# Capture diff from worktree for review context injection
+DIFF_CONTENT=""
+CHANGED_FILES=""
+if [ -n "$WORKTREE_PATH" ] && [ -d "$WORKTREE_PATH" ]; then
+    # Get list of changed files
+    CHANGED_FILES=$(git -C "$WORKTREE_PATH" diff --name-only HEAD~1 2>/dev/null | head -20 || echo "")
+
+    # Get the actual diff (limit size to avoid context overflow)
+    DIFF_CONTENT=$(git -C "$WORKTREE_PATH" diff HEAD~1 --no-color 2>/dev/null | head -500 || echo "")
+
+    # If diff is too large, summarize
+    DIFF_LINES=$(echo "$DIFF_CONTENT" | wc -l)
+    if [ "$DIFF_LINES" -ge 500 ]; then
+        DIFF_CONTENT="${DIFF_CONTENT}
+
+... (diff truncated at 500 lines, full diff in worktree)"
+    fi
+fi
+
+# Build review context
+REVIEW_CONTEXT="## Task ${CURRENT_TASK} Completed
+
+### Task Output
+\`\`\`json
+${TASK_OUTPUT}
+\`\`\`
+
+### Changed Files
+${CHANGED_FILES:-No files captured}
+
+### Implementation Diff
+\`\`\`diff
+${DIFF_CONTENT:-No diff captured - check worktree at ${WORKTREE_PATH}}
+\`\`\`
+
+Ready for /spec-review and /code-review."
+
+# Escape for JSON (newlines, quotes, backslashes)
+REVIEW_CONTEXT_ESCAPED=$(echo "$REVIEW_CONTEXT" | jq -Rs '.')
+
+# Output context for orchestrator - includes diff for reviewer skills
 cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStop",
-    "additionalContext": "Task ${CURRENT_TASK} completed. Output saved to ${OUTPUT_FILE}"
+    "additionalContext": ${REVIEW_CONTEXT_ESCAPED}
   }
 }
 EOF

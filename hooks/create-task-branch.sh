@@ -1,11 +1,12 @@
 #!/bin/bash
 # create-task-branch.sh - SubagentStart hook for /execute
-# Creates git branch when babyclaude spawns for task execution.
+# Creates git branch AND worktree when babyclaude spawns for task execution.
+# Worktree enables safe parallel execution - each agent gets isolated filesystem.
 #
 # Matcher: babyclaude (only triggers for this agent type)
 # Exit codes:
-#   0 - Branch created successfully (context added)
-#   2 - Branch creation failed (blocks agent spawn, informs user)
+#   0 - Branch + worktree created successfully (worktree_path in context)
+#   2 - Creation failed (blocks agent spawn, informs user)
 
 set -euo pipefail
 
@@ -13,6 +14,7 @@ set -euo pipefail
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 CLAUDE_DIR="$PROJECT_DIR/.claude"
 STATE_FILE="$CLAUDE_DIR/execute-state.json"
+WORKTREE_BASE="/tmp/kernel-worktrees"
 
 # Read input JSON from stdin
 INPUT=$(cat)
@@ -61,38 +63,54 @@ UUID_SUFFIX=$(uuidgen | cut -d'-' -f1)
 # Create branch name: execute/task-{id}-{slug}-{uuid}
 BRANCH_NAME="execute/task-${TASK_ID}-${TASK_SLUG}-${UUID_SUFFIX}"
 
-# Attempt to create and checkout branch
-if GIT_OUTPUT=$(git checkout -b "$BRANCH_NAME" 2>&1); then
-    # Update state file with branch info
+# Create worktree directory
+mkdir -p "$WORKTREE_BASE"
+WORKTREE_PATH="${WORKTREE_BASE}/task-${TASK_ID}-${UUID_SUFFIX}"
+
+# Create branch first (without checkout - we'll use worktree)
+if ! git branch "$BRANCH_NAME" 2>/dev/null; then
+    # Branch might already exist from a previous failed attempt - that's ok
+    if ! git rev-parse --verify "$BRANCH_NAME" >/dev/null 2>&1; then
+        echo "ERROR: Failed to create branch: $BRANCH_NAME" >&2
+        exit 2
+    fi
+fi
+
+# Create worktree for the branch
+if GIT_OUTPUT=$(git worktree add "$WORKTREE_PATH" "$BRANCH_NAME" 2>&1); then
+    # Update state file with branch and worktree info
     if [ -f "$STATE_FILE" ]; then
-        jq --arg branch "$BRANCH_NAME" --arg taskId "$TASK_ID" \
-           '.tasks = [.tasks[] | if .id == $taskId then .branch = $branch else . end]' \
+        jq --arg branch "$BRANCH_NAME" --arg taskId "$TASK_ID" --arg worktree "$WORKTREE_PATH" \
+           '.tasks = [.tasks[] | if .id == $taskId then .branch = $branch | .worktree_path = $worktree else . end]' \
            "$STATE_FILE" > "${STATE_FILE}.tmp" && mv "${STATE_FILE}.tmp" "$STATE_FILE"
     fi
 
-    # Output context for babyclaude
+    # Output context for babyclaude with worktree path
+    # The orchestrator should use this path as cwd when spawning babyclaude
     cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStart",
-    "additionalContext": "You are working on branch: ${BRANCH_NAME}\n\nCommit all changes to this branch. Do not switch branches."
+    "additionalContext": "WORKTREE_PATH: ${WORKTREE_PATH}\nBRANCH: ${BRANCH_NAME}\n\nYou are working in an isolated worktree. All your file operations happen in: ${WORKTREE_PATH}\n\nDo NOT use git commands - the orchestrator handles all git operations."
   }
 }
 EOF
     exit 0
 else
-    # Branch creation failed - block and inform user
-    echo "ERROR: Failed to create task branch: $BRANCH_NAME" >&2
+    # Worktree creation failed - cleanup branch and block
+    git branch -D "$BRANCH_NAME" 2>/dev/null || true
+
+    echo "ERROR: Failed to create worktree: $WORKTREE_PATH" >&2
     echo "Git error: $GIT_OUTPUT" >&2
     echo "" >&2
     echo "Possible causes:" >&2
-    echo "  - Branch name already exists (collision despite UUID - very rare)" >&2
-    echo "  - Git repository is in a bad state" >&2
-    echo "  - Insufficient permissions" >&2
+    echo "  - Worktree path already exists (stale from previous run)" >&2
+    echo "  - Insufficient permissions on /tmp" >&2
+    echo "  - Git worktree limit reached" >&2
     echo "" >&2
     echo "To recover:" >&2
-    echo "  1. Check git status: git status" >&2
-    echo "  2. List existing branches: git branch -a | grep execute/" >&2
-    echo "  3. If stuck, try: git checkout main && git branch -D <stuck-branch>" >&2
+    echo "  1. Clean stale worktrees: git worktree prune" >&2
+    echo "  2. Remove manually: rm -rf ${WORKTREE_PATH}" >&2
+    echo "  3. List worktrees: git worktree list" >&2
     exit 2
 fi

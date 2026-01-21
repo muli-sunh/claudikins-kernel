@@ -43,121 +43,62 @@ if ! echo "$COMMAND" | grep -qE '^\s*git\s'; then
     exit 0
 fi
 
-# Dangerous git operations to block during execution
-# These patterns could corrupt task branches or lose work
+# ALLOWLIST APPROACH - Only permit known-safe git operations
+# Everything else is blocked by default. This is safer than blocklisting
+# because new dangerous commands (like cherry-pick) can't slip through.
 
-# Pattern: git checkout without -b (switching branches)
-# Note: Split into two conditions - grep -E doesn't support Perl lookaheads
-if echo "$COMMAND" | grep -qE 'git\s+checkout\s' && ! echo "$COMMAND" | grep -qE 'git\s+checkout\s+-b'; then
-    # Allow checkout of specific files (git checkout -- file)
-    if ! echo "$COMMAND" | grep -qE 'git\s+checkout\s+--\s'; then
-        echo "BLOCKED: Branch switching during task execution" >&2
+# Safe git subcommands that agents may use during task execution:
+#   add        - Stage changes
+#   status     - Check working tree state
+#   diff       - View changes
+#   log        - View history
+#   show       - View commits/objects
+#   ls-files   - List tracked files
+#   check-ignore - Check gitignore rules
+#   rev-parse  - Parse revisions
+#   symbolic-ref - Read/modify symbolic refs
+#   config     - Read config (--get, --list only)
+#   commit     - Commit staged changes
+
+# Extract the git subcommand
+GIT_SUBCOMMAND=$(echo "$COMMAND" | sed -n 's/.*git\s\+\([a-z-]\+\).*/\1/p')
+
+# Allowlist of safe git subcommands
+case "$GIT_SUBCOMMAND" in
+    add|status|diff|log|show|ls-files|check-ignore|rev-parse|symbolic-ref|commit)
+        # These are safe - allow them
+        exit 0
+        ;;
+    config)
+        # git config is safe only for reading (--get, --list, --get-all, --get-regexp)
+        if echo "$COMMAND" | grep -qE 'git\s+config\s+(--get|--list|--get-all|--get-regexp)'; then
+            exit 0
+        fi
+        echo "BLOCKED: git config write operation during task execution" >&2
         echo "" >&2
         echo "Command: $COMMAND" >&2
         echo "" >&2
-        echo "During claudikins-kernel:execute, agents must stay on their task branch." >&2
-        echo "Allowed: git checkout -b <new-branch> (create new)" >&2
-        echo "Allowed: git checkout -- <file> (restore file)" >&2
-        echo "" >&2
-        echo "If you need to switch branches, abort the task first." >&2
+        echo "Only read operations allowed: git config --get, git config --list" >&2
         exit 2
-    fi
-fi
-
-# Pattern: git switch (always switches branches)
-if echo "$COMMAND" | grep -qE 'git\s+switch\s'; then
-    echo "BLOCKED: Branch switching during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "During claudikins-kernel:execute, agents must stay on their task branch." >&2
-    exit 2
-fi
-
-# Pattern: git reset --hard (destructive)
-if echo "$COMMAND" | grep -qE 'git\s+reset\s+--hard'; then
-    echo "BLOCKED: Destructive reset during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Hard reset would destroy uncommitted work." >&2
-    echo "If you need to undo changes, use: git checkout -- <file>" >&2
-    exit 2
-fi
-
-# Pattern: git clean -fd (deletes untracked files)
-if echo "$COMMAND" | grep -qE 'git\s+clean\s+-[fd]'; then
-    echo "BLOCKED: Destructive clean during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "This would delete untracked files which may include new work." >&2
-    exit 2
-fi
-
-# Pattern: git push --force (rewrites history)
-if echo "$COMMAND" | grep -qE 'git\s+push\s+.*--force'; then
-    echo "BLOCKED: Force push during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Force pushing rewrites remote history and is not allowed during execution." >&2
-    exit 2
-fi
-
-# Pattern: git rebase (history rewrite)
-if echo "$COMMAND" | grep -qE 'git\s+rebase'; then
-    echo "BLOCKED: Rebase during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Rebasing changes history and could cause merge conflicts." >&2
-    echo "Rebasing is done at merge time, not during task execution." >&2
-    exit 2
-fi
-
-# Pattern: git merge (could cause conflicts mid-task)
-if echo "$COMMAND" | grep -qE 'git\s+merge'; then
-    echo "BLOCKED: Merge during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Merging is done at batch completion, not during task execution." >&2
-    echo "Complete your task first, then merging happens at checkpoint." >&2
-    exit 2
-fi
-
-# Pattern: git stash (could lose work)
-if echo "$COMMAND" | grep -qE 'git\s+stash'; then
-    echo "BLOCKED: Stash during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Stashing during execution could lose track of work." >&2
-    echo "Commit your changes instead: git add && git commit" >&2
-    exit 2
-fi
-
-# Pattern: git branch -d or -D (delete branch)
-if echo "$COMMAND" | grep -qE 'git\s+branch\s+-[dD]'; then
-    echo "BLOCKED: Branch deletion during task execution" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Branch cleanup happens after batch completion, not during execution." >&2
-    exit 2
-fi
-
-# Pattern: git push to protected branches (main, master, develop)
-if echo "$COMMAND" | grep -qE 'git\s+push\s+.*(main|master|develop)'; then
-    echo "BLOCKED: Direct push to protected branch" >&2
-    echo "" >&2
-    echo "Command: $COMMAND" >&2
-    echo "" >&2
-    echo "Direct pushes to main/master/develop are not allowed." >&2
-    echo "Work on your task branch. Merging happens at checkpoint." >&2
-    exit 2
-fi
-
-# Command is safe - allow it
-exit 0
+        ;;
+    *)
+        # Everything else is blocked
+        echo "BLOCKED: Unsafe git operation during task execution" >&2
+        echo "" >&2
+        echo "Command: $COMMAND" >&2
+        echo "Subcommand: $GIT_SUBCOMMAND" >&2
+        echo "" >&2
+        echo "During claudikins-kernel:execute, only safe git operations are allowed:" >&2
+        echo "  - git add, git commit (modify your work)" >&2
+        echo "  - git status, git diff, git log, git show (inspect state)" >&2
+        echo "  - git ls-files, git check-ignore (query files)" >&2
+        echo "  - git rev-parse, git symbolic-ref (query refs)" >&2
+        echo "  - git config --get/--list (read config)" >&2
+        echo "" >&2
+        echo "Blocked operations include: checkout, switch, reset, clean, push," >&2
+        echo "pull, fetch, rebase, merge, stash, cherry-pick, revert, tag, branch -d" >&2
+        echo "" >&2
+        echo "If you need these operations, complete your task first." >&2
+        exit 2
+        ;;
+esac
