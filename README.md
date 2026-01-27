@@ -190,7 +190,7 @@ sudo apt install jq
 # macOS
 brew install jq
 
-# Windows 
+# Windows
 winget install jqlang.jq
 ```
 
